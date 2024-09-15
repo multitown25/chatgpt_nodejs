@@ -1,0 +1,26 @@
+{
+  "name": "chatgpt",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node ./src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon ./src/index.js"
+  },
+  "private": true,
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^3.1.4"
+  },
+  "dependencies": {
+    "config": "^3.3.12",
+    "https-proxy-agent": "^7.0.5",
+    "openai": "^4.59.0",
+    "socks-proxy-agent": "^8.0.4",
+    "telegraf": "^4.16.3"
+  }
+}
