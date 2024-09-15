@@ -13,7 +13,7 @@ const INITIAL_SESSION = {
 // 85.143.44.220:64719:GXjt8nK3:ghhPdd4C
 const bot = new Telegraf(config.get('TG_BOT_TOKEN'), {
     telegram: {
-        agent: new SocksProxyAgent('socks://GXjt8nK3:ghhPdd4C@185.222.214.128:64487')}
+        agent: new SocksProxyAgent(config.get("PROXY_SOCKS5"))}
 });
 
 bot.use(session());
