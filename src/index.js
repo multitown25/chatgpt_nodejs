@@ -3,7 +3,6 @@ import config from 'config';
 import {message} from "telegraf/filters";
 import {code} from "telegraf/format";
 import {openai} from './openai.js';
-import { SocksProxyAgent } from 'socks-proxy-agent';
 
 
 const INITIAL_SESSION = {
@@ -11,10 +10,7 @@ const INITIAL_SESSION = {
 }
 
 // 85.143.44.220:64719:GXjt8nK3:ghhPdd4C
-const bot = new Telegraf(config.get('TG_BOT_TOKEN'), {
-    telegram: {
-        agent: new SocksProxyAgent(config.get("PROXY_SOCKS5"))}
-});
+const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
 
 bot.use(session());
 bot.launch();
@@ -32,7 +28,8 @@ bot.on(message('text'), async (ctx) => {
         // await ctx.reply(JSON.stringify(ctx.message, null, 2));
         const messages = [{role: openai.roles.USER, content: ctx.message.text}];
         const response = await openai.chat(messages);
-        await ctx.reply(response);
+
+        await ctx.reply(JSON.stringify(response, null, 2));
 
 
     } catch (e) {
