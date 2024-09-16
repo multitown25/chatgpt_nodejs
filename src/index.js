@@ -9,6 +9,8 @@ const INITIAL_SESSION = {
     messages: []
 }
 
+const REFACTOR_REGEX = /(?<!\\)(_|\*|\[|\]|\(|\)|\~|`|>|#|\+|-|=|\||\{|\}|\.|!)/g;
+
 // 85.143.44.220:64719:GXjt8nK3:ghhPdd4C
 const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
 
@@ -29,7 +31,8 @@ bot.on(message('text'), async (ctx) => {
         const messages = [{role: openai.roles.USER, content: ctx.message.text}];
         const response = await openai.chat(messages);
 
-        await ctx.replyWithMarkdownV2(response.message.content);
+        const text = response.message.content.replace(REFACTOR_REGEX , (match) => "\\" + match);
+        await ctx.reply(text);
 
 
     } catch (e) {
