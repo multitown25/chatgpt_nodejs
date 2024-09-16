@@ -3,13 +3,12 @@ import config from 'config';
 import {message} from "telegraf/filters";
 import {code} from "telegraf/format";
 import {openai} from './openai.js';
+import {escapeMarkdownV2} from "./escaper.js";
 
 
 const INITIAL_SESSION = {
     messages: []
 }
-
-const REFACTOR_REGEX = /(?<!\\)(_|\*|\[|\]|\(|\)|\~|`|>|#|\+|-|=|\||\{|\}|\.|!)/g;
 
 // 85.143.44.220:64719:GXjt8nK3:ghhPdd4C
 const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
@@ -31,8 +30,8 @@ bot.on(message('text'), async (ctx) => {
         const messages = [{role: openai.roles.USER, content: ctx.message.text}];
         const response = await openai.chat(messages);
 
-        const text = response.message.content.replace(REFACTOR_REGEX , (match) => "\\" + match);
-        await ctx.replyWithMarkdownV2(text);
+        const text = escapeMarkdownV2(response.message.content);
+        await ctx.reply(text, {parse_mode : 'MarkdownV2'});
 
 
     } catch (e) {
