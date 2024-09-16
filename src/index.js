@@ -32,7 +32,7 @@ bot.on(message('text'), async (ctx) => {
         const response = await openai.chat(messages);
 
         const text = response.message.content.replace(REFACTOR_REGEX , (match) => "\\" + match);
-        await ctx.reply(text);
+        await ctx.reply(text, {parse_mode : 'MarkdownV2'});
 
 
     } catch (e) {
