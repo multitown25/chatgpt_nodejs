@@ -29,7 +29,7 @@ bot.on(message('text'), async (ctx) => {
         const messages = [{role: openai.roles.USER, content: ctx.message.text}];
         const response = await openai.chat(messages);
 
-        await ctx.reply(response.message.content);
+        await ctx.reply(response.message.content, {parse_mode: 'HTML'});
 
 
     } catch (e) {
