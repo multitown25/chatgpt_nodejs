@@ -3,7 +3,6 @@ import config from 'config';
 import {message} from "telegraf/filters";
 import {code} from "telegraf/format";
 import {openai} from './openai.js';
-import { escapers } from "@telegraf/entity";
 
 
 const INITIAL_SESSION = {
