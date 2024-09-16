@@ -18,7 +18,7 @@ class OpenAIApi {
     async chat(messages) {
         try {
             const response = await this.openai.chat.completions.create({
-                model: "gpt-4o",
+                model: "gpt-4o-mini",
                 messages
             });
             return response.choices[0];
