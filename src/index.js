@@ -3,6 +3,7 @@ import config from 'config';
 import {message} from "telegraf/filters";
 import {code} from "telegraf/format";
 import {openai} from './openai.js';
+import { escapers } from "@telegraf/entity";
 
 
 const INITIAL_SESSION = {
@@ -29,7 +30,7 @@ bot.on(message('text'), async (ctx) => {
         const messages = [{role: openai.roles.USER, content: ctx.message.text}];
         const response = await openai.chat(messages);
 
-        await ctx.reply(response.message.content, {parse_mode: 'MarkdownV2'});
+        await ctx.replyWithMarkdownV2(response.message.content);
 
 
     } catch (e) {
