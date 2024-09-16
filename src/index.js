@@ -25,10 +25,13 @@ bot.on(message('text'), async (ctx) => {
     ctx.session ??= INITIAL_SESSION;
     try {
         await ctx.reply(code('Сообщение принял. Жду ответ от сервера...'));
-        await ctx.reply(code(`Ваш запрос: ${ctx.message.text}`))
+        // await ctx.reply(code(`Ваш запрос: ${ctx.message.text}`))
         // await ctx.reply(JSON.stringify(ctx.message, null, 2));
-        const messages = [{role: openai.roles.USER, content: ctx.message.text}];
-        const response = await openai.chat(messages);
+        ctx.session.messages.push({role: openai.roles.USER, content: ctx.message.text})
+        // const messages = [{role: openai.roles.USER, content: ctx.message.text}];
+        const response = await openai.chat(ctx.session.messages);
+
+        ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response.message.content})
 
         const text = escapeMarkdownV2(response.message.content);
         await ctx.reply(text, {parse_mode : 'MarkdownV2'});
