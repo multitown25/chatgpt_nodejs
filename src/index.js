@@ -16,6 +16,11 @@ const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
 bot.use(session());
 bot.launch();
 
+bot.command('new', async (ctx) => {
+    ctx.session = INITIAL_SESSION;
+    await ctx.reply('Жду вашего сообщения')
+})
+
 bot.command('start', async (ctx) => {
     ctx.session = INITIAL_SESSION;
     await ctx.reply('Жду вашего сообщения')
