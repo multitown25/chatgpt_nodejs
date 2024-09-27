@@ -27,14 +27,14 @@ class OpenAIApi {
         })
     }
 
-    async chat(messages) {
+    async chat(messages, model) {
         try {
             // const response = await this.openai.chat.completions.create({
             //     model: "gpt-4o",
             //     messages
             // });
             const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-                model: "o1-mini",
+                model,
                 messages
             }, this.config).then(data => data.data);
 

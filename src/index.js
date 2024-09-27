@@ -244,7 +244,9 @@ bot.on(message('text'), async (ctx) => {
         // const messages = [{role: openai.roles.USER, content: ctx.message.text}];
         // await ctx.reply(JSON.stringify(ctx.session, null, 2));
 
-        const response = await openai.chat(ctx.session.messages);
+        const model = await UserService.getUserModel(ctx.from.id.toString());
+        // console.log('request with model ', model)
+        const response = await openai.chat(ctx.session.messages, model.name);
 
         ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response.content})
 
@@ -266,7 +268,7 @@ bot.on(message('text'), async (ctx) => {
         // await sendMessages(ctx, messages, 'MarkdownV2');
 
         const user = await UserService.getUserByTgId(ctx.from.id.toString());
-        const model = await ModelService.getModelById(user.modelId);
+        // const model = await ModelService.getModelById(user.modelId);
         const request = await RequestService.create(
             model.name,
             ctx.message.text,
