@@ -18,7 +18,7 @@ class CompanyService {
 
     async getCompanyNameByUserTgId(tgId) {
         try {
-            const user = await UserService.getUserByTgId(tgId);
+            const user = await UserService.getUser({telegramId: tgId});
             const company = await Company.findById(user.companyId);
 
             if (company) {

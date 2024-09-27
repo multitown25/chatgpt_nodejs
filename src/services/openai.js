@@ -34,7 +34,7 @@ class OpenAIApi {
             //     messages
             // });
             const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-                model,
+                model: model,
                 messages
             }, this.config).then(data => data.data);
 

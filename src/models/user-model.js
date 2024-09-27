@@ -21,13 +21,13 @@ const UserSchema = new Schema({
     },
     telegramId: {
         type: String,
-        required: true,
         unique: true,
         minLength: [9, "Invalid id. Id's length must be 9-10!"],
         maxLength: [10, "Invalid id. Id's length must be 9-10!"]
     },
     telegramUsername: {
         type: String,
+        required: true
     },
     createdAt: {
         type: Date,

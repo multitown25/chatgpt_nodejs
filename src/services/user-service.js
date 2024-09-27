@@ -4,15 +4,17 @@ import CompanyService from "./company-service.js";
 import ModelService from "./model-service.js";
 
 class UserService {
-    async register(roleName, companyName, telegramId) {
+    async register(roleName, companyName, telegramUsername) {
         const roleId = await RoleService.getRoleId(roleName);
         const companyId = await CompanyService.getCompanyId(companyName);
+        const defaultModel = await ModelService.getModelByName("gpt-4o mini");
 
         const newUser = new User({
             roleId: roleId,
             companyId: companyId,
-            telegramId: telegramId,
-            isActive: true
+            telegramUsername: telegramUsername,
+            isActive: true,
+            modelId: defaultModel._id
         });
 
         try {
@@ -25,13 +27,14 @@ class UserService {
         }
     }
 
-    async getUserByTgId(tgId) {
+    async getUser(filter) {
         try {
-            const user = await User.findOne({telegramId: tgId});
+            const user = await User.findOne(filter);
 
             if (!user) {
-                throw new Error('User not found');
-
+                console.log('User not found');
+                return null;
+                // throw new Error('User not found');
             }
             return user;
         } catch (err) {
@@ -40,10 +43,10 @@ class UserService {
         }
     }
 
-    async updateUserByTgId(tgId, updateData) {
+    async updateUser(filter, updateData) {
         try {
             const updatedUser = await User.findOneAndUpdate(
-                {telegramId: tgId},
+                filter,
                 {$set: updateData},
                 {new: true, runValidators: true}
             );
@@ -55,7 +58,6 @@ class UserService {
             return updatedUser;
         } catch (err) {
             console.error(err);
-            throw err;
         }
     }
 

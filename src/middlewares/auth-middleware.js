@@ -1,6 +1,9 @@
 import User from '../models/user-model.js'
 
 export default async function authMiddleware(ctx, next) {
+    if (ctx.update?.message?.text === '/start') {
+        return next();
+    }
     if (!ctx.from) {
         ctx.reply(`!ctx.from: ${JSON.stringify(ctx.from)}`);
         return ctx.reply('Unauthorized access.')

@@ -31,13 +31,13 @@ const AVAILABLE_MODELS = [
         picture: "🔥"
     },
     {
-        name: "gpt-4o mini",
+        name: "gpt-4o-mini",
         description: "быстрая и доступная модель OpenAI для повседневных задач",
         picture: "✔️"
     },
 ]
 
-const REGISTER_FORMAT = '\nроль\nid телеграмм аккаунта'
+const REGISTER_FORMAT = '\nроль\nusername телеграмм аккаунта'
 
 const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
 
@@ -65,14 +65,24 @@ bot.command('start', async (ctx) => {
         messages: [],
         systemMessages: []
     };
-    await ctx.reply(config.get('WELCOME_MESSAGE'));
 
-    // update tg username
     const tgId = ctx.from.id;
     const tgUsername = ctx.from.username;
+    let welcomeMessage = (config.get('WELCOME_MESSAGE'));
+
     // check cache. if equals skip
-    const updatedUser = await UserService.updateUserByTgId(tgId, {telegramUsername: tgUsername});
-    console.log(updatedUser);
+
+    // check user register
+    const user = await UserService.getUser({telegramUsername: tgUsername});
+    if (user) {
+        // console.log(user);
+        const updatedUser = await UserService.updateUser({telegramUsername: tgUsername}, {telegramId: tgId});
+        // console.log(updatedUser);
+    } else {
+        welcomeMessage += `\n ${config.get('NOT_REGISTERED')}`
+    }
+
+    await ctx.reply(welcomeMessage);
 });
 
 bot.command('register', async (ctx) => {
@@ -209,11 +219,11 @@ async function register(ctx) {
     const data = {
         roleName: inputDataArr[0],
         companyName: await CompanyService.getCompanyNameByUserTgId(ctx.from.id.toString()),
-        telegramId: inputDataArr[1]
+        telegramUsername: inputDataArr[1]
     }
 
     ctx.session.systemMessages.push({type: 'registerConfirm', data})
-    const newUserText = `Роль: ${data.roleName}\nНазвание компании: ${data.companyName}\nТелеграмм id: ${data.telegramId}`;
+    const newUserText = `Роль: ${data.roleName}\nНазвание компании: ${data.companyName}\nТелеграмм username: ${data.telegramUsername}`;
 
 
     await ctx.reply(`Вы хотите зарегистрировать следующего пользователя?\n\n${newUserText}`,
@@ -245,6 +255,7 @@ bot.on(message('text'), async (ctx) => {
         // await ctx.reply(JSON.stringify(ctx.session, null, 2));
 
         const model = await UserService.getUserModel(ctx.from.id.toString());
+        console.log('MODEL', model);
         // console.log('request with model ', model)
         const response = await openai.chat(ctx.session.messages, model.name);
 
@@ -267,7 +278,7 @@ bot.on(message('text'), async (ctx) => {
         // Отправка сообщений с учетом MarkdownV2 и задержкой
         // await sendMessages(ctx, messages, 'MarkdownV2');
 
-        const user = await UserService.getUserByTgId(ctx.from.id.toString());
+        const user = await UserService.getUser({telegramId: ctx.from.id.toString()});
         // const model = await ModelService.getModelById(user.modelId);
         const request = await RequestService.create(
             model.name,
@@ -291,7 +302,7 @@ bot.action('register', async (ctx) => {
         await ctx.reply('Процесс регистрации нового пользователя..');
 
         const userData = ctx.session.systemMessages.pop().data;
-        const response = await UserService.register(userData.roleName, userData.companyName, userData.telegramId);
+        const response = await UserService.register(userData.roleName, userData.companyName, userData.telegramUsername);
 
         await ctx.reply(`Пользователь успешно зарегистрирован!`)
         ctx.session.systemMessages = [];
