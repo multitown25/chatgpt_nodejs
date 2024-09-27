@@ -96,7 +96,7 @@ bot.command('model', async (ctx) => {
     // const
     const currentModel = await UserService.getUserModel(ctx.from.id.toString());
     let welcomeMessage = `Добро пожаловать в настройки ChatGPT!\n\nЗдесь вы можете настроить модель по своему усмотрению для более эффективного взаимодействия.\n
-Текущая модель: ${currentModel.name}.\n\nДоступные модели:\n\n`;
+Текущая модель: ${currentModel?.name}.\n\nДоступные модели:\n\n`;
     AVAILABLE_MODELS.forEach(model => {
         welcomeMessage += `${model.picture} ${model.name} — ${model.description}.\n\n`
     })
