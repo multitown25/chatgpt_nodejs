@@ -144,7 +144,10 @@ bot.action(/setModel_(.+)/, async (ctx) => {
 });
 
 bot.action('close', async (ctx) => {
-    ctx.session.systemMessages = [];
+    if (ctx.session) {
+        ctx.session.systemMessages = [];
+    }
+
     await ctx.editMessageReplyMarkup();
     await ctx.editMessageText("Действие отменено.");
 });
