@@ -48,41 +48,43 @@ bot.use(updateLastActivityMiddleware);
 bot.telegram.setMyCommands([
     {command: '/start', description: 'Начать общение'},
     {command: '/register', description: 'Зарегистрировать нового пользователя'},
-    {command: '/model', description: 'Настройка модели OpenAI'}
+    {command: '/model', description: 'Настройка модели OpenAI'},
+    {command: '/new', description: 'Сбросить контекст'}
 ]);
 
-bot.command('new', async (ctx, next) => {
+bot.command('new', async (ctx) => {
     ctx.session = {
         messages: [],
         systemMessages: []
     };
-    await ctx.reply('Жду вашего сообщения');
-    next();
+    await ctx.reply('Контекст сброшен! Жду вашего сообщения');
 });
 
 bot.command('start', async (ctx) => {
-    ctx.session = {
-        messages: [],
-        systemMessages: []
-    };
-
     const tgId = ctx.from.id;
     const tgUsername = ctx.from.username;
     let welcomeMessage = (config.get('WELCOME_MESSAGE'));
 
-    // check cache. if equals skip
-
     // check user register
     const user = await UserService.getUser({telegramUsername: tgUsername});
-    if (user) {
-        // console.log(user);
-        const updatedUser = await UserService.updateUser({telegramUsername: tgUsername}, {telegramId: tgId});
-        // console.log(updatedUser);
-    } else {
-        welcomeMessage += `\n ${config.get('NOT_REGISTERED')}`
+
+    if (!user) {
+        await ctx.reply(welcomeMessage + `\n ${config.get('NOT_REGISTERED')}`);
+        return;
     }
 
+    const updatedUser = await UserService.updateUser({telegramUsername: tgUsername}, {telegramId: tgId});
+    ctx.session = {
+        messages: [],
+        systemMessages: []
+    };
+
     await ctx.reply(welcomeMessage);
+
+    if (!user.firstname || !user.lastname) {
+        await ctx.reply('Для продолжения необходимо ввести имя и фамилию в следующем сообщении через пробел!');
+        ctx.session.systemMessages.push({type: 'updateUser', data: ctx.message.text})
+    }
 });
 
 bot.command('register', async (ctx) => {
@@ -130,17 +132,17 @@ bot.action('changeModel', async (ctx) => {
 });
 
 bot.action(/setModel_(.+)/, async (ctx) => {
-   const selectedModel = ctx.match[1].replace("OpenAI", "").trim();
+    const selectedModel = ctx.match[1].replace("OpenAI", "").trim();
 
-   // await ctx.editMessageText(`Вы выбрали модель: ${selectedModel}`);
-   const response = await UserService.setUserModel(ctx.from.id.toString(), selectedModel);
+    // await ctx.editMessageText(`Вы выбрали модель: ${selectedModel}`);
+    const response = await UserService.setUserModel(ctx.from.id.toString(), selectedModel);
 
-   if (response) {
-       await ctx.editMessageText(`Успешно! Вы выбрали модель: ${selectedModel}.`);
-   } else {
-       await ctx.editMessageText(`Something wrong..`);
-   }
-   // console.log(response);
+    if (response) {
+        await ctx.editMessageText(`Успешно! Вы выбрали модель: ${selectedModel}.`);
+    } else {
+        await ctx.editMessageText(`Something wrong..`);
+    }
+    // console.log(response);
 });
 
 bot.action('close', async (ctx) => {
@@ -237,6 +239,34 @@ async function register(ctx) {
     // ctx.session.messages.pop(); // очистка контекста
 }
 
+async function updateUser(ctx) {
+    const regex = /^[A-Za-zА-Яа-яЁё]+ [A-Za-zА-Яа-яЁё]+$/; // два слова через один пробел, состоящие только из латинских букв и кириллицы
+
+    try {
+        if (!regex.test(ctx.message.text)) {
+            return await ctx.reply('Неправильный ввод данных! Попробуйте снова\n\nВведите имя и фамилию через пробел (допустимы только латинские буквы и кириллица)',
+                Markup.inlineKeyboard([
+                    [Markup.button.callback('Отменить действие', 'close')]
+                ]));
+        }
+        const userInfo = ctx.message.text.split(' ');
+        const updatedUser = await UserService.updateUser({telegramId: ctx.from.id.toString()}, {firstname: userInfo[0], lastname: userInfo[1]});
+
+        const sysMessage = await ctx.reply(`Информация обновлена!`);
+        setTimeout(() => {
+            ctx.deleteMessage(sysMessage.message_id).catch((err) => console.log('Ошибка при удалении сообщения', err));
+        }, 2500);
+
+        const welcomeMessage = config.get('WELCOME_MESSAGE').replace(/(Добро пожаловать в наш бот)/, `$1, ${userInfo[0]} ${userInfo[1]}`);
+        await ctx.reply(welcomeMessage);
+        ctx.session.systemMessages = [];
+
+    } catch (e) {
+        console.log('Error from register action', e);
+        await ctx.reply('Что-то пошло не так..\n' + e);
+    }
+}
+
 bot.on(message('text'), async (ctx) => {
     ctx.session ??= {
         messages: [],
@@ -247,6 +277,10 @@ bot.on(message('text'), async (ctx) => {
         const lastSystemMessage = ctx.session.systemMessages[ctx.session.systemMessages.length - 1];
         if (lastSystemMessage?.type === 'register') { // type?
             await register(ctx);
+            return;
+        }
+        if (lastSystemMessage?.type === 'updateUser') {
+            await updateUser(ctx);
             return;
         }
 

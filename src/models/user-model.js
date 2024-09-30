@@ -15,6 +15,12 @@ const UserSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Model'
     },
+    firstname: {
+        type: String
+    },
+    lastname: {
+        type: String
+    },
     isActive: {
         type: Boolean,
         default: false

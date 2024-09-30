@@ -17,8 +17,7 @@ class OpenAIApi {
             'Authorization': `Bearer ${config.get('OPENAI_TOKEN')}`,
             'Content-Type': 'application/json'
         },
-        httpsAgent: this.agent,
-        // responseType: 'stream'
+        httpsAgent: this.agent
     }
 
     constructor(apiKey) {
@@ -37,29 +36,6 @@ class OpenAIApi {
                 model: model,
                 messages
             }, this.config).then(data => data.data);
-
-
-
-            // const res = [];
-            // const stream = response.data;
-            // for await (const chunk of stream) {
-            //     // console.log(chunk);
-            //     res.push(chunk.toString());
-            // }
-            //
-            // const jsonObjectsArray = res.map((dataString) => {
-            //     // удаляем лишние символы и разбиваем по 'data:'
-            //     const parts = dataString.trim().split('data:')
-            //
-            //     // пропускаем элементы, которые не содержат JSON
-            //     let jsonParts = parts.filter(part => part.trim().startsWith('{'));
-            //
-            //     // преобразуем каждый 'part' обратно в JSON
-            //     return jsonParts.map((jsonPart) => {
-            //         return JSON.parse(jsonPart);
-            //     })
-            // });
-            // console.log(jsonObjectsArray)
 
             return {
                 content: response.choices[0].message.content,
