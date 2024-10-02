@@ -70,7 +70,8 @@ bot.telegram.setMyCommands([
     {command: '/register', description: 'Зарегистрировать нового пользователя'},
     {command: '/model', description: 'Настройка модели OpenAI'},
     {command: '/new', description: 'Сбросить контекст'},
-    {command: '/showusers', description: 'Показать всех пользователей'}
+    {command: '/showusers', description: 'Показать всех пользователей'},
+    {command: '/delete', description: 'Удалить пользователя'}
 ]);
 
 bot.command('new', async (ctx) => {
@@ -147,6 +148,18 @@ bot.command('register', async (ctx) => {
         ctx.deleteMessage(systemMessage.message_id).catch((err) => console.log('Ошибка при удалении сообщения', err));
     }, 2500)
     await ctx.reply('Введите данные пользователя в формате\n' + REGISTER_FORMAT,
+        Markup.inlineKeyboard([
+            [Markup.button.callback('Отменить', 'close')]
+        ]))
+});
+// вместо проверки контекста на каждой команде лучше добавить в middleware?
+bot.command('delete', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+    ctx.session.systemMessages.push({type: 'delete', data: ctx.message.text});
+    await ctx.reply('Введите username пользователя',
         Markup.inlineKeyboard([
             [Markup.button.callback('Отменить', 'close')]
         ]))
@@ -287,6 +300,21 @@ async function register(ctx) {
     // ctx.session.messages.pop(); // очистка контекста
 }
 
+async function deleteUser(ctx) {
+    const username = await ctx.message.text;
+
+    const user = await UserService.getUser({telegramUsername: username});
+    if (!user) {
+        return await ctx.editMessageText('Такого пользователя не существует. Отмена действия..');
+    }
+    const res = await UserService.deleteUser({telegramUsername: username});
+    if (res.deletedCount === 1) {
+        await ctx.reply(`Пользователь ${user.telegramUsername} успешно удален!`)
+    } else {
+        await ctx.reply('Что-то пошло не так..')
+    }
+}
+
 async function updateUser(ctx) {
     const regex = /^[A-Za-zА-Яа-яЁё]+ [A-Za-zА-Яа-яЁё]+$/; // два слова через один пробел, состоящие только из латинских букв и кириллицы
 
@@ -332,6 +360,10 @@ bot.on(message('text'), async (ctx) => {
         }
         if (lastSystemMessage?.type === 'updateUser') {
             await updateUser(ctx);
+            return;
+        }
+        if (lastSystemMessage?.type === 'delete') {
+            await deleteUser(ctx);
             return;
         }
 

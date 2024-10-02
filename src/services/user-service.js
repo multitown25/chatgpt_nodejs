@@ -7,11 +7,14 @@ class UserService {
     async register(roleName, companyName, telegramUsername) {
         const roleId = await RoleService.getRoleId(roleName);
         const company = await CompanyService.getCompany(companyName);
-        const defaultModel = await ModelService.getModelByName("gpt-4o mini");
-
+        const defaultModel = await ModelService.getModelByName("gpt-4o-mini");
+        console.log(company);
         const newUser = new User({
             roleId: roleId,
-            company,
+            company: {
+                id: company._id,
+                name: company.name
+            },
             telegramUsername: telegramUsername,
             isActive: true,
             modelId: defaultModel._id
@@ -114,6 +117,21 @@ class UserService {
         } catch (error) {
             console.error('Ошибка при получении пользователя:', error);
             throw error;
+        }
+    }
+
+    async deleteUser(filter) {
+        try {
+            const response = await User.deleteOne(filter);
+
+            if (!response) {
+                console.log('Something wrong..');
+                return null;
+                // throw new Error('User not found');
+            }
+            return response;
+        } catch (err) {
+            console.error(err);
         }
     }
 }
