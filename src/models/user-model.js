@@ -6,10 +6,16 @@ const UserSchema = new Schema({
         ref: 'Role',
         required: true
     },
-    companyId: {
-        type: Schema.Types.ObjectId,
-        ref: 'Company',
-        required: true
+    company: {
+        id: {
+            type: Schema.Types.ObjectId,
+            ref: 'Company',
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        }
     },
     modelId: {
         type: Schema.Types.ObjectId,

@@ -22,5 +22,5 @@ export function escapeMarkdownV2(s) {
 
     const toEscape = new RegExp("[" + Object.values(escapables).join("") + "]", "g");
 
-    return s.replace(toEscape, r => escapables[r] || r);
+    return s?.replace(toEscape, r => escapables[r] || r);
 }

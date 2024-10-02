@@ -6,12 +6,12 @@ import ModelService from "./model-service.js";
 class UserService {
     async register(roleName, companyName, telegramUsername) {
         const roleId = await RoleService.getRoleId(roleName);
-        const companyId = await CompanyService.getCompanyId(companyName);
+        const company = await CompanyService.getCompany(companyName);
         const defaultModel = await ModelService.getModelByName("gpt-4o mini");
 
         const newUser = new User({
             roleId: roleId,
-            companyId: companyId,
+            company,
             telegramUsername: telegramUsername,
             isActive: true,
             modelId: defaultModel._id
@@ -37,6 +37,21 @@ class UserService {
                 // throw new Error('User not found');
             }
             return user;
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async getUsers(filter) {
+        try {
+            const users = await User.find(filter);
+
+            if (!users) {
+                console.log('Users not found');
+                return null;
+                // throw new Error('User not found');
+            }
+            return users;
         } catch (err) {
             console.error(err);
         }

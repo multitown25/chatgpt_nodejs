@@ -9,9 +9,10 @@ import mongoose from "mongoose";
 import UserService from "./services/user-service.js";
 import CompanyService from "./services/company-service.js";
 import RequestService from "./services/request-service.js";
-import ModelService from "./services/model-service.js";
 import updateLastActivityMiddleware from "./middlewares/updateLastActivity-middleware.js";
-import {escapeMarkdown} from "./utils/escapeMarkdownV2.js";
+import * as path from "node:path";
+import { fileURLToPath } from 'url';
+import * as fs from "node:fs";
 
 
 const AVAILABLE_MODELS = [
@@ -41,6 +42,25 @@ const REGISTER_FORMAT = '\nроль\nusername телеграмм аккаунт�
 
 const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
 
+// Путь к файлу логов
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const logFilePath = path.join(__dirname, 'error.log');
+
+// Функция для записи ошибок в файл с временной меткой
+function logError(error) {
+    const errorMessage = `[${new Date().toISOString()}] ${error.stack || error}\n`;
+    fs.appendFile(logFilePath, errorMessage, (err) => {
+        if (err) {
+            console.error('Не удалось записать ошибку в файл логов:', err);
+        }
+    });
+}
+bot.catch((err, ctx) => {
+    console.error(`Ошибка для пользователя ${ctx.from.id}:`, err);
+    logError(err);
+});
+
 bot.use(session());
 bot.use(authMiddleware);
 bot.use(updateLastActivityMiddleware);
@@ -49,7 +69,8 @@ bot.telegram.setMyCommands([
     {command: '/start', description: 'Начать общение'},
     {command: '/register', description: 'Зарегистрировать нового пользователя'},
     {command: '/model', description: 'Настройка модели OpenAI'},
-    {command: '/new', description: 'Сбросить контекст'}
+    {command: '/new', description: 'Сбросить контекст'},
+    {command: '/showusers', description: 'Показать всех пользователей'}
 ]);
 
 bot.command('new', async (ctx) => {
@@ -58,6 +79,33 @@ bot.command('new', async (ctx) => {
         systemMessages: []
     };
     await ctx.reply('Контекст сброшен! Жду вашего сообщения');
+});
+
+bot.command('showusers', async (ctx) => {
+    const currentUser = await UserService.getUser({telegramId: ctx.from.id.toString()});
+    const users = await UserService.getUsers({'company.name': currentUser.company.name});
+
+    if (users.length === 0) {
+        await ctx.reply('Список пользователей пуст.');
+        return;
+    }
+
+    const messages = users.map((user, index) => {
+        return `
+*Пользователь ${index + 1}:*
+*Имя:* ${escapeMarkdownV2(user.firstname)}
+*Фамилия:* ${escapeMarkdownV2(user.lastname)}
+*Username:* @${escapeMarkdownV2(user.telegramUsername)}
+*Компания:* ${escapeMarkdownV2(user.company.name)}
+*Последняя активность:* ${user.lastActivity}
+*Активен:* ${user.isActive ? 'Да' : 'Нет'}
+    `;
+    });
+
+    const fullMessage = messages.join('\n---\n');
+
+    await ctx.reply(fullMessage, { parse_mode: 'Markdown' });
+
 });
 
 bot.command('start', async (ctx) => {
@@ -250,7 +298,10 @@ async function updateUser(ctx) {
                 ]));
         }
         const userInfo = ctx.message.text.split(' ');
-        const updatedUser = await UserService.updateUser({telegramId: ctx.from.id.toString()}, {firstname: userInfo[0], lastname: userInfo[1]});
+        const updatedUser = await UserService.updateUser({telegramId: ctx.from.id.toString()}, {
+            firstname: userInfo[0],
+            lastname: userInfo[1]
+        });
 
         const sysMessage = await ctx.reply(`Информация обновлена!`);
         setTimeout(() => {

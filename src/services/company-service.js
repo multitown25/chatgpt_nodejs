@@ -2,11 +2,11 @@ import Company from "../models/company-model.js";
 import UserService from "./user-service.js";
 
 class CompanyService {
-    async getCompanyId(companyName) {
+    async getCompany(companyName) {
         try {
             const company = await Company.findOne({name: companyName});
             if (company) {
-                return company._id;
+                return company;
             } else {
                 throw new Error('Company not found');
             }
@@ -19,7 +19,7 @@ class CompanyService {
     async getCompanyNameByUserTgId(tgId) {
         try {
             const user = await UserService.getUser({telegramId: tgId});
-            const company = await Company.findById(user.companyId);
+            const company = await Company.findById(user.company.id);
 
             if (company) {
                 return company.name;
