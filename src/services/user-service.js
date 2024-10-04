@@ -42,6 +42,7 @@ class UserService {
             return user;
         } catch (err) {
             console.error(err);
+            throw err;
         }
     }
 
@@ -57,6 +58,7 @@ class UserService {
             return users;
         } catch (err) {
             console.error(err);
+            throw err;
         }
     }
 
@@ -75,6 +77,7 @@ class UserService {
             return updatedUser;
         } catch (err) {
             console.error(err);
+            throw err;
         }
     }
 
@@ -132,6 +135,7 @@ class UserService {
             return response;
         } catch (err) {
             console.error(err);
+            throw err;
         }
     }
 }

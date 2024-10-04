@@ -1,0 +1,11 @@
+[2024-10-04T11:40:43.287Z] ReferenceError: err is not defined
+    at file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:424:54
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21

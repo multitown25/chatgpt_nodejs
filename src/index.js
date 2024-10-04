@@ -11,7 +11,7 @@ import CompanyService from "./services/company-service.js";
 import RequestService from "./services/request-service.js";
 import updateLastActivityMiddleware from "./middlewares/updateLastActivity-middleware.js";
 import * as path from "node:path";
-import { fileURLToPath } from 'url';
+import {fileURLToPath} from 'url';
 import * as fs from "node:fs";
 
 
@@ -56,6 +56,7 @@ function logError(error) {
         }
     });
 }
+
 bot.catch((err, ctx) => {
     console.error(`Ошибка для пользователя ${ctx.from.id}:`, err);
     logError(err);
@@ -105,7 +106,7 @@ bot.command('showusers', async (ctx) => {
 
     const fullMessage = messages.join('\n---\n');
 
-    await ctx.reply(fullMessage, { parse_mode: 'Markdown' });
+    await ctx.reply(fullMessage, {parse_mode: 'Markdown'});
 
 });
 
@@ -145,7 +146,10 @@ bot.command('register', async (ctx) => {
 
     const systemMessage = await ctx.reply(code(`Регистрация нового пользователя..`));
     setTimeout(() => {
-        ctx.deleteMessage(systemMessage.message_id).catch((err) => console.log('Ошибка при удалении сообщения', err));
+        ctx.deleteMessage(systemMessage.message_id).catch((err) => {
+            console.log('Ошибка при удалении сообщения', err);
+            throw err;
+        });
     }, 2500)
     await ctx.reply('Введите данные пользователя в формате\n' + REGISTER_FORMAT,
         Markup.inlineKeyboard([
@@ -218,62 +222,113 @@ bot.action('close', async (ctx) => {
 function splitMessage(text, maxLength = 4096) {
     const messages = [];
     let current = '';
-    let inCodeBlock = false; // Флаг для отслеживания состояния блока кода
+    const tagStack = []; // Стек для отслеживания открытых Markdown-элементов
+
+    // Маппинг открывающих и закрывающих символов Markdown
+    const markdownTags = {
+        '```': 'codeBlock',
+        '`': 'inlineCode',
+        '**': 'bold',
+        '*': 'italic',
+        '~~': 'strikethrough'
+    };
+
+    // Функция для получения закрывающих символов из стека
+    function closeTags() {
+        let closing = '';
+        while (tagStack.length > 0) {
+            const tag = tagStack.pop();
+            for (const key in markdownTags) {
+                if (markdownTags[key] === tag) {
+                    closing += key;
+                    break;
+                }
+            }
+        }
+        return closing;
+    }
+
+    // Функция для открытия тегов из стека
+    function openTags() {
+        let opening = '';
+        tagStack.forEach(tag => {
+            for (const key in markdownTags) {
+                if (markdownTags[key] === tag) {
+                    opening += key;
+                    break;
+                }
+            }
+        });
+        return opening;
+    }
 
     // Разделяем текст на строки для более безопасного разбиения
     const lines = text.split('\n');
 
-    for (let line of lines) {
-        const codeBlockRegex = /^```/; // Регулярное выражение для обнаружения начала/конца блока кода
+    for (let originalLine of lines) {
+        let line = originalLine;
+        let i = 0;
 
-        // Проверяем, является ли текущая строка началом или концом блока кода
-        if (codeBlockRegex.test(line.trim())) {
-            inCodeBlock = !inCodeBlock;
-        }
+        while (i < line.length) {
+            let matched = false;
 
-        // Предполагаем, что добавление этой строки не превышает лимит
-        let addedLength = line.length + 1; // +1 для символа переноса строки
+            // Проверяем наличие многосимвольных тегов (``` , **, ~~)
+            for (const tag of ['```', '**', '~~', '`', '*']) {
+                if (line.startsWith(tag, i)) {
+                    const currentTag = markdownTags[tag];
+                    const lastTag = tagStack[tagStack.length - 1];
 
-        // Если текущий текст не пустой, учитываем символ переноса строки
-        if (current.length > 0) {
-            addedLength = line.length + 1; // '\n' + line
-        } else {
-            addedLength = line.length;
-        }
-
-        // Проверяем, превышает ли добавление этой строки лимит
-        if ((current.length + addedLength) > maxLength) {
-            // Если мы находимся внутри блока кода, нам нужно закрыть его перед разбиением
-            if (inCodeBlock) {
-                current += '\n```'; // Закрываем блок кода
-                messages.push(current);
-                current = '```'; // Открываем новый блок кода в следующем сообщении
-            } else {
-                // Если не внутри блока кода, просто добавляем текущее сообщение
-                if (current.length > 0) {
-                    messages.push(current);
-                    current = '';
+                    if (lastTag === currentTag) {
+                        // Закрываем тег
+                        current += tag;
+                        tagStack.pop();
+                    } else {
+                        // Открываем тег
+                        current += tag;
+                        tagStack.push(currentTag);
+                    }
+                    i += tag.length;
+                    matched = true;
+                    break;
                 }
             }
 
-            // Если строка сама по себе длиннее лимита, необходимо её дополнительно разбить
-            while (line.length > maxLength) {
-                const part = line.substring(0, maxLength);
-                messages.push(part);
-                line = line.substring(maxLength);
+            if (!matched) {
+                // Добавляем текущий символ
+                current += line[i];
+                i++;
+            }
+
+            // Проверка на превышение лимита после добавления символа или тега
+            if (current.length >= maxLength) {
+                // Закрываем все открытые теги перед разбиением
+                current += closeTags();
+                messages.push(current);
+                current = '';
+
+                // Открываем заново те же теги для следующего сообщения
+                current += openTags();
             }
         }
 
-        // Добавляем строку к текущему сообщению с учётом переноса строки
-        current += (current.length > 0 ? '\n' : '') + line;
+        // Добавляем перенос строки
+        current += '\n';
+
+        // Проверка после добавления строки
+        if (current.length > maxLength) {
+            // Закрываем все открытые теги перед разбиением
+            current += closeTags();
+            messages.push(current);
+            current = '';
+            // Открываем заново те же теги для следующего сообщения
+            current += openTags();
+        }
     }
 
-    // Если после цикла остался текст, добавляем его в сообщения
+    // Добавляем оставшийся текст
     if (current.length > 0) {
-        // Если мы находимся внутри блока кода, закрываем его
-        if (inCodeBlock) {
-            current += '\n```';
-        }
+        // Закрываем оставшиеся теги
+        current += closeTags();
         messages.push(current);
     }
 
@@ -333,7 +388,10 @@ async function updateUser(ctx) {
 
         const sysMessage = await ctx.reply(`Информация обновлена!`);
         setTimeout(() => {
-            ctx.deleteMessage(sysMessage.message_id).catch((err) => console.log('Ошибка при удалении сообщения', err));
+            ctx.deleteMessage(sysMessage.message_id).catch((err) => {
+                console.log('Ошибка при удалении сообщения', err);
+                throw err;
+            });
         }, 2500);
 
         const welcomeMessage = config.get('WELCOME_MESSAGE').replace(/(Добро пожаловать в наш бот)/, `$1, ${userInfo[0]} ${userInfo[1]}`);
@@ -343,6 +401,8 @@ async function updateUser(ctx) {
     } catch (e) {
         console.log('Error from register action', e);
         await ctx.reply('Что-то пошло не так..\n' + e);
+        console.log('Ошибка при удалении сообщения', err);
+        throw e;
     }
 }
 
@@ -386,7 +446,7 @@ bot.on(message('text'), async (ctx) => {
 
         const splittedText = splitMessage(response.content, 4096);
         for await (const chunk of splittedText) {
-            await ctx.reply(chunk, {parse_mode: "Markdown"});
+            await ctx.reply(chunk);
         }
 
         // Экранирование специальных символов MarkdownV2
@@ -412,7 +472,8 @@ bot.on(message('text'), async (ctx) => {
         // console.log(request);
 
     } catch (e) {
-        console.log('Error from text message', e)
+        console.log('Error from text message', e);
+        throw e;
     }
 });
 
@@ -430,6 +491,8 @@ bot.action('register', async (ctx) => {
     } catch (e) {
         console.log('Error from register action', e);
         await ctx.reply('Отказано!\n' + e);
+        console.log('Ошибка при удалении сообщения', err);
+        throw e;
     }
 });
 
