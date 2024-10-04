@@ -446,7 +446,7 @@ bot.on(message('text'), async (ctx) => {
 
         const splittedText = splitMessage(response.content, 4096);
         for await (const chunk of splittedText) {
-            await ctx.reply(chunk);
+            await ctx.reply(chunk, {parse_mode: 'Markdown'});
         }
 
         // Экранирование специальных символов MarkdownV2

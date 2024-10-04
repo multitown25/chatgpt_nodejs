@@ -9,3 +9,47 @@
     at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
     at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
     at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+[2024-10-04T12:03:21.299Z] Error: 400: Bad Request: message is too long
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:449:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-04T12:05:52.305Z] Error: 400: Bad Request: can't parse entities: Character '-' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:449:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-04T12:07:23.968Z] Error: 400: Bad Request: unsupported parse_mode
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:449:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-04T12:08:03.071Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 5857
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:449:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
