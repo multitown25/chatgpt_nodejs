@@ -53,3 +53,311 @@
     at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
     at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
     at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T07:56:30.032Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 1288
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:583:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:03:01.833Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 4967
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:587:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:15:08.996Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 6270
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:589:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:16:52.185Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 5126
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:589:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:18:46.614Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 5779
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:589:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:22:50.793Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 1671
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:589:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:34:54.796Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 5112
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:547:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:40:28.764Z] ReferenceError: splitMessage is not defined
+    at file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:553:30
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+[2024-10-08T08:41:12.695Z] Error: 400: Bad Request: message is too long
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:555:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:42:38.281Z] Error: 400: Bad Request: message is too long
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:556:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:46:33.423Z] Error: 400: Bad Request: message is too long
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:556:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:48:16.292Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 909
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:548:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:49:52.833Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 5158
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:548:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:52:55.430Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 1069
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:550:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T08:59:34.404Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 943
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:540:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T09:01:15.866Z] ReferenceError: tokensToMarkdown is not defined
+    at splitMessage (file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:373:31)
+    at file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:516:30
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T09:03:56.558Z] Error: 400: Bad Request: can't parse entities: Character '!' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:576:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T09:08:12.715Z] Error: 400: Bad Request: message is too long
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:580:9
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T09:13:12.112Z] Error: 400: Bad Request: can't parse entities: Character '!' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async sendLongMessage (file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:442:13)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:562:9
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+[2024-10-08T10:55:45.830Z] Error: 400: Bad Request: can't parse entities: Character '#' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:336:4
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T10:56:00.435Z] Error: 400: Bad Request: can't parse entities: Character '#' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:336:4
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T10:56:14.013Z] Error: 400: Bad Request: can't parse entities: Character '#' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:336:4
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T10:59:44.555Z] Error: 400: Bad Request: can't parse entities: Character '#' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:336:4
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T10:59:56.065Z] Error: 400: Bad Request: can't parse entities: Character '#' is reserved and must be escaped with the preceding '\'
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:336:4
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T11:04:32.619Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 2700
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:609:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T11:08:27.984Z] Error: 400: Bad Request: can't parse entities: Unsupported start tag "`" at byte offset 63
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:610:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T11:08:58.500Z] Error: 400: Bad Request: can't parse entities: Unsupported start tag "`" at byte offset 70
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:610:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-08T11:09:42.191Z] Error: 400: Bad Request: can't parse entities: Unsupported start tag "br" at byte offset 489
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:610:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)

@@ -13,6 +13,10 @@ import updateLastActivityMiddleware from "./middlewares/updateLastActivity-middl
 import * as path from "node:path";
 import {fileURLToPath} from 'url';
 import * as fs from "node:fs";
+import redis from "redis";
+import {marked} from 'marked';
+import {removeFile} from "./utils/removeFile.js";
+import {ogg} from "./ogg.js";
 
 
 const AVAILABLE_MODELS = [
@@ -38,7 +42,8 @@ const AVAILABLE_MODELS = [
     },
 ]
 
-const REGISTER_FORMAT = '\nроль\nusername телеграмм аккаунта'
+const REGISTER_FORMAT = '\nроль\nusername телеграмм аккаунта';
+const USERS_PER_PAGE = 5;
 
 const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
 
@@ -57,6 +62,67 @@ function logError(error) {
     });
 }
 
+const redisURL = `redis://103.106.3.47:6379`;
+const redisClient = redis.createClient({
+    url: redisURL
+});
+
+redisClient.on('error', (err) => {
+    console.error('Redis error:', err);
+});
+
+// Средство для реализации rate limiting
+async function rateLimiter(ctx, next){
+    const userId = ctx.from.id.toString();
+    const WINDOW_SIZE_IN_SECONDS = 5;
+    const MAX_WINDOW_REQUEST_COUNT = 2;
+    const WINDOW_LOG_INTERVAL_IN_HOURS = 1;
+
+    const windowStartTimestamp = Math.floor(Date.now() / 1000) - WINDOW_SIZE_IN_SECONDS;
+
+    // Ключ для хранения данных в Redis
+    const key = `rate-limit:${userId}`;
+
+    console.log('next0')
+    await redisClient.get(key, async (err, record) => {
+        if (err) {
+            console.error('Redis GET error:', err);
+            throw err;
+        }
+
+        const currentTime = Math.floor(Date.now() / 1000);
+
+        if (record == null) {
+            // Если запись отсутствует, создаем новую
+            const newRecord = [];
+            const requestLog = {
+                requestTimeStamp: currentTime,
+            };
+            newRecord.push(requestLog);
+            await redisClient.set(key, JSON.stringify(newRecord), 'EX', WINDOW_SIZE_IN_SECONDS);
+            return next();
+        }
+
+        // Парсим существующую запись
+        const data = JSON.parse(record);
+        const windowStartTimestamp = currentTime - WINDOW_SIZE_IN_SECONDS;
+        const requestsWithinWindow = data.filter(entry => entry.requestTimeStamp > windowStartTimestamp);
+
+        const totalWindowRequestsCount = requestsWithinWindow.length;
+
+        if (totalWindowRequestsCount >= MAX_WINDOW_REQUEST_COUNT) {
+            await ctx.reply(`Вы превысили лимит ${MAX_WINDOW_REQUEST_COUNT} запросов за ${WINDOW_SIZE_IN_SECONDS} секунд(ы). Попробуйте позже.`);
+            throw new Error(`Пользователь ${userId} превысил лимит ${MAX_WINDOW_REQUEST_COUNT} запросов за ${WINDOW_SIZE_IN_SECONDS} секунд(ы)`)
+        } else {
+            // Добавляем новый запрос к записи
+            requestsWithinWindow.push({requestTimeStamp: currentTime});
+            await redisClient.set(key, JSON.stringify(requestsWithinWindow), 'EX', WINDOW_SIZE_IN_SECONDS);
+            next();
+        }
+    });
+    console.log('nextLAST')
+}
+
 bot.catch((err, ctx) => {
     console.error(`Ошибка для пользователя ${ctx.from.id}:`, err);
     logError(err);
@@ -65,6 +131,7 @@ bot.catch((err, ctx) => {
 bot.use(session());
 bot.use(authMiddleware);
 bot.use(updateLastActivityMiddleware);
+// bot.use(rateLimiter);
 
 bot.telegram.setMyCommands([
     {command: '/start', description: 'Начать общение'},
@@ -84,30 +151,102 @@ bot.command('new', async (ctx) => {
 });
 
 bot.command('showusers', async (ctx) => {
-    const currentUser = await UserService.getUser({telegramId: ctx.from.id.toString()});
-    const users = await UserService.getUsers({'company.name': currentUser.company.name});
+    try {
+        const currentUser = await UserService.getUser({telegramId: ctx.from.id.toString()});
+        const users = await UserService.getUsers({'company.name': currentUser.company.name});
 
-    if (users.length === 0) {
-        await ctx.reply('Список пользователей пуст.');
-        return;
-    }
+        if (users.length === 0) {
+            await ctx.reply('Список пользователей пуст.');
+            return;
+        }
 
-    const messages = users.map((user, index) => {
-        return `
-*Пользователь ${index + 1}:*
+        // Функция для создания сообщения для конкретной страницы
+        const generateMessage = (page) => {
+            const start = page * USERS_PER_PAGE;
+            const end = start + USERS_PER_PAGE;
+            const paginatedUsers = users.slice(start, end);
+
+            const messages = paginatedUsers.map((user, index) => {
+                const userIndex = start + index + 1;
+                return `
+*Пользователь ${userIndex}:*
 *Имя:* ${escapeMarkdownV2(user.firstname)}
 *Фамилия:* ${escapeMarkdownV2(user.lastname)}
 *Username:* @${escapeMarkdownV2(user.telegramUsername)}
 *Компания:* ${escapeMarkdownV2(user.company.name)}
 *Последняя активность:* ${user.lastActivity}
 *Активен:* ${user.isActive ? 'Да' : 'Нет'}
-    `;
-    });
+                `;
+            });
 
-    const fullMessage = messages.join('\n---\n');
+            const fullMessage = messages.join('\n---\n');
+            return fullMessage;
+        };
 
-    await ctx.reply(fullMessage, {parse_mode: 'Markdown'});
+        const totalPages = Math.ceil(users.length / USERS_PER_PAGE);
+        let currentPage = 0;
 
+        const createKeyboard = (page) => {
+            const buttons = [];
+
+            if (page > 0) {
+                buttons.push(Markup.button.callback('◀️ Назад', `prev_${page}`));
+            } else {
+                buttons.push(Markup.button.callback('◀️ Назад', 'noop'));
+            }
+
+            buttons.push(Markup.button.callback(`Страница ${page + 1} из ${totalPages}`, 'noop'));
+
+            if (page < totalPages - 1) {
+                buttons.push(Markup.button.callback('Вперёд ▶️', `next_${page}`));
+            } else {
+                buttons.push(Markup.button.callback('Вперёд ▶️', 'noop'));
+            }
+
+            return Markup.inlineKeyboard([buttons]);
+        };
+
+        // Отправка первого сообщения с первой страницей
+        await ctx.reply(generateMessage(currentPage), {
+            parse_mode: 'Markdown',
+            ...createKeyboard(currentPage)
+        });
+
+        // Обработка нажатий кнопок
+        bot.action(/(next|prev)_(\d+)/, async (ctx) => {
+            const action = ctx.match[1];
+            const page = parseInt(ctx.match[2]);
+
+            let newPage;
+            if (action === 'next') {
+                newPage = page + 1;
+                if (newPage >= totalPages) {
+                    newPage = totalPages - 1;
+                }
+            } else if (action === 'prev') {
+                newPage = page - 1;
+                if (newPage < 0) {
+                    newPage = 0;
+                }
+            }
+
+            await ctx.editMessageText(generateMessage(newPage), {
+                parse_mode: 'Markdown',
+                ...createKeyboard(newPage)
+            });
+
+            await ctx.answerCbQuery();
+        });
+
+        // Опционально: Обработка кнопки без действия (noop)
+        bot.action('noop', (ctx) => {
+            ctx.answerCbQuery();
+        });
+
+    } catch (error) {
+        console.error(error);
+        await ctx.reply('Произошла ошибка при получении списка пользователей.');
+    }
 });
 
 bot.command('start', async (ctx) => {
@@ -196,6 +335,13 @@ bot.action('changeModel', async (ctx) => {
     // await ctx.editMessageText(availableModels);
 });
 
+bot.command('test', async (ctx) => {
+    console.log('next')
+    await ctx.reply('Заключение');
+    // await ctx.replyWithMarkdown('### Заключение');
+    // await ctx.reply('### Заключение');
+});
+
 bot.action(/setModel_(.+)/, async (ctx) => {
     const selectedModel = ctx.match[1].replace("OpenAI", "").trim();
 
@@ -226,11 +372,27 @@ function splitMessage(text, maxLength = 4096) {
 
     // Маппинг открывающих и закрывающих символов Markdown
     const markdownTags = {
-        '```': 'codeBlock',
-        '`': 'inlineCode',
-        '**': 'bold',
-        '*': 'italic',
-        '~~': 'strikethrough'
+        '```': 'codeBlock',                 // Блок кода
+        '`': 'inlineCode',                  // Встраиваемый код
+        '**': 'bold',                       // Жирный текст
+        '*': 'italic',                      // Курсив
+        '~~': 'strikethrough',              // Зачеркнутый текст
+        '#': 'header1',                     // Заголовок 1 уровня
+        '##': 'header2',                    // Заголовок 2 уровня
+        '###': 'header3',                   // Заголовок 3 уровня
+        '####': 'header4',                  // Заголовок 4 уровня
+        '#####': 'header5',                 // Заголовок 5 уровня
+        '######': 'header6',                // Заголовок 6 уровня
+        '[]()': 'link',                     // Ссылка
+        '![]()': 'image',                   // Изображение
+        '-': 'unorderedList',               // Неупорядоченный список
+        '+': 'unorderedList',               // Неупорядоченный список (альтернатива)
+        '1.': 'orderedList',                // Упорядоченный список
+        '2.': 'orderedList',                // Упорядоченный список
+        '>': 'blockquote',                  // Цитата
+        '---': 'horizontalLine',            // Горизонтальная линия
+        '***': 'horizontalLine',             // Горизонтальная линия (альтернатива)
+        '___': 'horizontalLine'             // Горизонтальная линия (альтернатива)
     };
 
     // Функция для получения закрывающих символов из стека
@@ -272,8 +434,9 @@ function splitMessage(text, maxLength = 4096) {
         while (i < line.length) {
             let matched = false;
 
+            const tags = Object.keys(markdownTags);
             // Проверяем наличие многосимвольных тегов (``` , **, ~~)
-            for (const tag of ['```', '**', '~~', '`', '*']) {
+            for (const tag of tags) {
                 if (line.startsWith(tag, i)) {
                     const currentTag = markdownTags[tag];
                     const lastTag = tagStack[tagStack.length - 1];
@@ -334,6 +497,7 @@ function splitMessage(text, maxLength = 4096) {
 
     return messages;
 }
+
 
 async function register(ctx) {
     const inputDataArr = ctx.message.text.split('\n');
@@ -406,6 +570,33 @@ async function updateUser(ctx) {
     }
 }
 
+bot.on(message('voice'), async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+    try {
+        await ctx.reply(code('Сообщение принял. Жду ответ от сервера...'))
+        const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id)
+        const userId = String(ctx.message.from.id)
+        const oggPath = await ogg.create(link.href, userId);
+        // console.log('oggPath', oggPath);
+        const mp3Path = await ogg.toMp3(oggPath, userId);
+        // console.log('mp3Path', mp3Path);
+        // removeFile(oggPath);
+        const text = await openai.transcription(mp3Path)
+        await ctx.reply(code(`Ваш запрос: ${text}`));
+        ctx.session.messages.push({role: openai.roles.USER, content: text})
+        const model = await UserService.getUserModel(ctx.from.id.toString());
+        const response = await openai.chat(ctx.session.messages, model.name);
+        ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response.content})
+        await ctx.reply(response.content);
+    } catch (e) {
+        console.error(`Error while proccessing voice message`, e.message)
+    }
+})
+
+
 bot.on(message('text'), async (ctx) => {
     ctx.session ??= {
         messages: [],
@@ -436,7 +627,6 @@ bot.on(message('text'), async (ctx) => {
 
         const model = await UserService.getUserModel(ctx.from.id.toString());
         console.log('MODEL', model);
-        // console.log('request with model ', model)
         const response = await openai.chat(ctx.session.messages, model.name);
 
         ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response.content})
@@ -444,20 +634,14 @@ bot.on(message('text'), async (ctx) => {
         // const text = escapeMarkdownV2(response.content);
         // console.log(text.length);
 
-        const splittedText = splitMessage(response.content, 4096);
+        const splittedText = splitMessage(response.content, 4000);
         for await (const chunk of splittedText) {
-            await ctx.reply(chunk, {parse_mode: 'Markdown'});
+            console.log('chunk length', chunk.length);
+            await ctx.reply(chunk, {parse_mode: 'Markdown', disable_web_page_preview: true});
         }
 
-        // Экранирование специальных символов MarkdownV2
-        // const escapedText = escapeMarkdown(response.content);
-
-        // Разбиение текста на части
-        // const messages = splitMessage(text, 4096);
-
-        // Отправка сообщений с учетом MarkdownV2 и задержкой
-        // await sendMessages(ctx, messages, 'MarkdownV2');
-
+        // console.log(response.content.length)
+        // await ctx.reply(response.content);
         const user = await UserService.getUser({telegramId: ctx.from.id.toString()});
         // const model = await ModelService.getModelById(user.modelId);
         const request = await RequestService.create(
@@ -515,7 +699,9 @@ const start = async () => {
         console.log('Successfully connected to MongoDB');
     }).catch(err => {
         console.error('Error connecting to MongoDB', err);
-    })
+    });
+
+    await redisClient.connect();
 
     bot.launch();
 }

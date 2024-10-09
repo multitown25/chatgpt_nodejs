@@ -2,6 +2,7 @@ import { OpenAI } from 'openai';
 import config from 'config';
 import {code} from "telegraf/format";
 import { SocksProxyAgent } from 'socks-proxy-agent';
+import { createReadStream } from 'fs'
 import axios from "axios";
 
 class OpenAIApi {
@@ -50,8 +51,24 @@ class OpenAIApi {
         }
     }
 
-    async transcription() {
+    async transcription(filepath) {
+        try {
+            const response = await axios.post('https://api.openai.com/v1/audio/transcriptions', {
+                file: createReadStream(filepath),
+                model: 'whisper-1'
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${config.get('OPENAI_TOKEN')}`,
+                    'Content-Type': 'multipart/form-data'
+                },
+                httpsAgent: this.agent
+            }).then(data => data.data);
 
+
+            return response.text;
+        } catch (e) {
+            console.log('Error while transcription', e.message)
+        }
     }
 }
 
