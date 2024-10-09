@@ -701,7 +701,7 @@ const start = async () => {
         console.error('Error connecting to MongoDB', err);
     });
 
-    await redisClient.connect();
+    // await redisClient.connect();
 
     bot.launch();
 }
