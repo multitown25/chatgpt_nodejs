@@ -17,6 +17,7 @@ import redis from "redis";
 import {marked} from 'marked';
 import {removeFile} from "./utils/removeFile.js";
 import {ogg} from "./ogg.js";
+import {rateLimiter} from "./middlewares/rateLimiter-middleware.js";
 
 
 const AVAILABLE_MODELS = [
@@ -62,67 +63,6 @@ function logError(error) {
     });
 }
 
-const redisURL = `redis://103.106.3.47:6379`;
-const redisClient = redis.createClient({
-    url: redisURL
-});
-
-redisClient.on('error', (err) => {
-    console.error('Redis error:', err);
-});
-
-// Средство для реализации rate limiting
-async function rateLimiter(ctx, next){
-    const userId = ctx.from.id.toString();
-    const WINDOW_SIZE_IN_SECONDS = 5;
-    const MAX_WINDOW_REQUEST_COUNT = 2;
-    const WINDOW_LOG_INTERVAL_IN_HOURS = 1;
-
-    const windowStartTimestamp = Math.floor(Date.now() / 1000) - WINDOW_SIZE_IN_SECONDS;
-
-    // Ключ для хранения данных в Redis
-    const key = `rate-limit:${userId}`;
-
-    console.log('next0')
-    await redisClient.get(key, async (err, record) => {
-        if (err) {
-            console.error('Redis GET error:', err);
-            throw err;
-        }
-
-        const currentTime = Math.floor(Date.now() / 1000);
-
-        if (record == null) {
-            // Если запись отсутствует, создаем новую
-            const newRecord = [];
-            const requestLog = {
-                requestTimeStamp: currentTime,
-            };
-            newRecord.push(requestLog);
-            await redisClient.set(key, JSON.stringify(newRecord), 'EX', WINDOW_SIZE_IN_SECONDS);
-            return next();
-        }
-
-        // Парсим существующую запись
-        const data = JSON.parse(record);
-        const windowStartTimestamp = currentTime - WINDOW_SIZE_IN_SECONDS;
-        const requestsWithinWindow = data.filter(entry => entry.requestTimeStamp > windowStartTimestamp);
-
-        const totalWindowRequestsCount = requestsWithinWindow.length;
-
-        if (totalWindowRequestsCount >= MAX_WINDOW_REQUEST_COUNT) {
-            await ctx.reply(`Вы превысили лимит ${MAX_WINDOW_REQUEST_COUNT} запросов за ${WINDOW_SIZE_IN_SECONDS} секунд(ы). Попробуйте позже.`);
-            throw new Error(`Пользователь ${userId} превысил лимит ${MAX_WINDOW_REQUEST_COUNT} запросов за ${WINDOW_SIZE_IN_SECONDS} секунд(ы)`)
-        } else {
-            // Добавляем новый запрос к записи
-            requestsWithinWindow.push({requestTimeStamp: currentTime});
-            await redisClient.set(key, JSON.stringify(requestsWithinWindow), 'EX', WINDOW_SIZE_IN_SECONDS);
-            next();
-        }
-    });
-    console.log('nextLAST')
-}
-
 bot.catch((err, ctx) => {
     console.error(`Ошибка для пользователя ${ctx.from.id}:`, err);
     logError(err);
@@ -131,7 +71,8 @@ bot.catch((err, ctx) => {
 bot.use(session());
 bot.use(authMiddleware);
 bot.use(updateLastActivityMiddleware);
-// bot.use(rateLimiter);
+const limiter = rateLimiter(2, 5);
+bot.use(limiter);
 
 bot.telegram.setMyCommands([
     {command: '/start', description: 'Начать общение'},
@@ -377,22 +318,8 @@ function splitMessage(text, maxLength = 4096) {
         '**': 'bold',                       // Жирный текст
         '*': 'italic',                      // Курсив
         '~~': 'strikethrough',              // Зачеркнутый текст
-        '#': 'header1',                     // Заголовок 1 уровня
-        '##': 'header2',                    // Заголовок 2 уровня
-        '###': 'header3',                   // Заголовок 3 уровня
-        '####': 'header4',                  // Заголовок 4 уровня
-        '#####': 'header5',                 // Заголовок 5 уровня
-        '######': 'header6',                // Заголовок 6 уровня
         '[]()': 'link',                     // Ссылка
         '![]()': 'image',                   // Изображение
-        '-': 'unorderedList',               // Неупорядоченный список
-        '+': 'unorderedList',               // Неупорядоченный список (альтернатива)
-        '1.': 'orderedList',                // Упорядоченный список
-        '2.': 'orderedList',                // Упорядоченный список
-        '>': 'blockquote',                  // Цитата
-        '---': 'horizontalLine',            // Горизонтальная линия
-        '***': 'horizontalLine',             // Горизонтальная линия (альтернатива)
-        '___': 'horizontalLine'             // Горизонтальная линия (альтернатива)
     };
 
     // Функция для получения закрывающих символов из стека
@@ -596,10 +523,10 @@ bot.on(message('voice'), async (ctx) => {
     }
 })
 
-
+const RULE = `Символов в ответе не должно быть больше 4096. Это ограничение телеграм`
 bot.on(message('text'), async (ctx) => {
     ctx.session ??= {
-        messages: [],
+        messages: [{role: openai.roles.ASSISTANT, content: RULE}],
         systemMessages: []
     };
     try {
@@ -701,7 +628,7 @@ const start = async () => {
         console.error('Error connecting to MongoDB', err);
     });
 
-    // await redisClient.connect();
+
 
     bot.launch();
 }

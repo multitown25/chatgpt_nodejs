@@ -361,3 +361,80 @@
     at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
     at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
     at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-10T10:25:02.880Z] ReferenceError: redisClient is not defined
+    at rateLimiter (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:13:5)
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at updateLastActivityMiddleware (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/updateLastActivity-middleware.js:18:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-10T10:25:02.933Z] ReferenceError: redisClient is not defined
+    at rateLimiter (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:13:5)
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at updateLastActivityMiddleware (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/updateLastActivity-middleware.js:18:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-10T10:25:03.065Z] ReferenceError: redisClient is not defined
+    at rateLimiter (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:13:5)
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at updateLastActivityMiddleware (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/updateLastActivity-middleware.js:18:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-10T10:25:03.171Z] ReferenceError: redisClient is not defined
+    at rateLimiter (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:13:5)
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:23)
+    at C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:27
+    at updateLastActivityMiddleware (file:///C:/Users/ram/WebstormProjects/chatGPT/src/middlewares/updateLastActivity-middleware.js:18:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-10T10:44:41.155Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 5858
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:578:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-10T10:48:25.257Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 473
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:578:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-10T10:51:01.818Z] Error: 400: Bad Request: can't parse entities: Can't find end of the entity starting at byte offset 567
+    at Telegram.callApi (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\core\network\client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async file:///C:/Users/ram/WebstormProjects/chatGPT/src/index.js:578:13
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+    at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
+    at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
