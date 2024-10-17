@@ -9,7 +9,7 @@ export default async function authMiddleware(ctx, next) {
         return ctx.reply('Unauthorized access.')
     }
 
-    const user = await User.findOne({telegramId: ctx.from.id.toString()});
+    const user = await User.findOne({telegramUsername: ctx.from.username});
 
     if (!user) {
         return ctx.reply(`Доступ запрещен!`);
