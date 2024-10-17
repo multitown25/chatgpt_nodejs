@@ -22,7 +22,7 @@ export const rateLimiter = (limit, windowSec) => {
         } catch (err) {
             console.error('Redis exec error:', err);
             // В случае ошибки пропускаем обработку
-            return await next();
+            throw err();
         }
     };
 };

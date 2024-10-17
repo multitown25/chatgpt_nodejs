@@ -438,3 +438,165 @@
     at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
     at async C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:519:21
     at async execute (C:\Users\ram\WebstormProjects\chatGPT\node_modules\telegraf\lib\composer.js:518:17)
+[2024-10-16T10:16:07.320Z] TimeoutError: Promise timed out after 90000 milliseconds
+    at Timeout._onTimeout (/home/ram/WebstormProjects/chatGPT/node_modules/p-timeout/index.js:39:64)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+[2024-10-16T10:19:54.501Z] TimeoutError: Promise timed out after 90000 milliseconds
+    at Timeout._onTimeout (/home/ram/WebstormProjects/chatGPT/node_modules/p-timeout/index.js:39:64)
+    at listOnTimeout (node:internal/timers:594:17)
+    at process.processTimers (node:internal/timers:529:7)
+[2024-10-16T10:47:42.737Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T10:58:11.818Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T11:00:27.119Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T11:02:23.482Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T11:04:02.086Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T11:39:27.822Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T12:34:15.296Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T12:35:16.766Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T12:39:09.438Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-16T12:39:55.128Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-17T11:44:13.114Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-17T11:46:16.287Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-17T11:50:20.779Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-17T11:54:37.809Z] Error: next() called multiple times
+    at execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:514:27)
+    at /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:27
+    at file:///home/ram/WebstormProjects/chatGPT/src/middlewares/rateLimiter-middleware.js:25:26
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21

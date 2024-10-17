@@ -38,6 +38,7 @@ class OpenAIApi {
                 messages
             }, this.config).then(data => data.data);
 
+            console.log(response.choices[0].message.content);
             return {
                 content: response.choices[0].message.content,
                 tokens: {
@@ -48,6 +49,7 @@ class OpenAIApi {
             };
         } catch (e) {
             console.log('Error while gpt chat', e.message)
+            console.log('Error while gpt chat', e.response.data);
         }
     }
 

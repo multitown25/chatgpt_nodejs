@@ -12,12 +12,13 @@ import RequestService from "./services/request-service.js";
 import updateLastActivityMiddleware from "./middlewares/updateLastActivity-middleware.js";
 import * as path from "node:path";
 import {fileURLToPath} from 'url';
-import * as fs from "node:fs";
+import * as fs from "node:fs/promises";
 import redis from "redis";
 import {marked} from 'marked';
 import {removeFile} from "./utils/removeFile.js";
 import {ogg} from "./ogg.js";
 import {rateLimiter} from "./middlewares/rateLimiter-middleware.js";
+import {dirname} from "path";
 
 
 const AVAILABLE_MODELS = [
@@ -53,14 +54,51 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const logFilePath = path.join(__dirname, 'error.log');
 
+// Папка для сохранения длинных сообщений
+const MESSAGES_DIR = path.join(__dirname, 'messages');
+// Функция для инициализации папки, если она не существует
+const initialize = async () => {
+    try {
+        await fs.mkdir(MESSAGES_DIR, { recursive: true });
+        console.log(`Папка для сообщений создана или уже существует: ${MESSAGES_DIR}`);
+    } catch (error) {
+        console.error('Ошибка при создании папки для сообщений:', error);
+    }
+};
+
+// Вызов инициализации при запуске
+initialize();
+
+
+
+
 // Функция для записи ошибок в файл с временной меткой
-function logError(error) {
+async function logError(error) {
     const errorMessage = `[${new Date().toISOString()}] ${error.stack || error}\n`;
-    fs.appendFile(logFilePath, errorMessage, (err) => {
+    await fs.appendFile(logFilePath, errorMessage, (err) => {
         if (err) {
             console.error('Не удалось записать ошибку в файл логов:', err);
         }
     });
+}
+
+async function writeToFileAndSend(ctx, messageText) {
+    const timestamp = Date.now();
+    const userId = ctx.from.id;
+    const filename = `message_${userId}_${timestamp}.txt`;
+    const filepath = path.join(MESSAGES_DIR, filename);
+
+    try {
+        // Запись сообщения в файл
+        await fs.writeFile(filepath, messageText, 'utf-8');
+        console.log(`Сообщение записано в файл: ${filepath}`);
+
+        await ctx.replyWithDocument({ source: filepath }, { caption: 'Ваше длинное сообщение сохранено и отправлено в файл.' });
+    } catch (error) {
+        console.error('Ошибка при записи файла или отправке сообщения:', error);
+        await ctx.reply('Произошла ошибка при обработке вашего сообщения. Пожалуйста, попробуйте позже.');
+        throw error;
+    }
 }
 
 bot.catch((err, ctx) => {
@@ -523,12 +561,12 @@ bot.on(message('voice'), async (ctx) => {
     }
 })
 
-const RULE = `Символов в ответе не должно быть больше 4096. Это ограничение телеграм`
 bot.on(message('text'), async (ctx) => {
     ctx.session ??= {
-        messages: [{role: openai.roles.ASSISTANT, content: RULE}],
+        messages: [],
         systemMessages: []
     };
+    let response;
     try {
         // console.log(ctx.from);
         const lastSystemMessage = ctx.session.systemMessages[ctx.session.systemMessages.length - 1];
@@ -554,7 +592,7 @@ bot.on(message('text'), async (ctx) => {
 
         const model = await UserService.getUserModel(ctx.from.id.toString());
         console.log('MODEL', model);
-        const response = await openai.chat(ctx.session.messages, model.name);
+        response = await openai.chat(ctx.session.messages, model.name);
 
         ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response.content})
 
@@ -570,9 +608,11 @@ bot.on(message('text'), async (ctx) => {
         // console.log(response.content.length)
         // await ctx.reply(response.content);
         const user = await UserService.getUser({telegramId: ctx.from.id.toString()});
+        console.log('USER', user);
         // const model = await ModelService.getModelById(user.modelId);
         const request = await RequestService.create(
             model.name,
+            user._id,
             ctx.message.text,
             response.content,
             response.tokens.promptTokens,
@@ -584,6 +624,7 @@ bot.on(message('text'), async (ctx) => {
 
     } catch (e) {
         console.log('Error from text message', e);
+        await writeToFileAndSend(ctx, response.content);
         throw e;
     }
 });

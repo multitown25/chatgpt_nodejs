@@ -1,40 +1,23 @@
-class Book {
-    constructor(isbn, author, title) {
-        this.isbn = isbn;
-        this.author = author;
-        this.title = title;
+import axios from "axios";
+
+const WEBHOOK_URL = 'https://b24.flaconrf.ru/rest/9242/ek2r7ghm5y2ccfwg/';
+const WEBHOOK_URL2 = 'https://b24.flaconrf.ru/rest/9242/ek2r7ghm5y2ccfwg/im.message.add.json';
+
+// Функция для отправки сообщения
+const sendMessage = async (dialogId, message) => {
+    try {
+        const response = await axios.post(`${WEBHOOK_URL}im.message.add`, null, {
+            params: {
+                DIALOG_ID: dialogId,
+                MESSAGE: message
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Ошибка при отправке сообщения:', error.response ? error.response.data : error.message);
+        throw error;
     }
-}
+};
 
-class Library {
-    constructor(name) {
-        this.name = name;
-        this.books = [];
-    }
-
-    addBook(book) {
-        this.books.push(book);
-    }
-
-    removeBook(isbn) {
-        this.books = this.books.filter(book => book.isbn !== isbn);
-    }
-
-    findBookByTitle(title) {
-        return this.books.find(book => book.title === title);
-    }
-}
-
-const book1 = new Book(1, 'Antony A', 'First book');
-const book2 = new Book(2, 'Antony A', 'Second book');
-const book3 = new Book(3, 'Joy B', 'First book');
-
-const library = new Library('MAIN LIB');
-library.addBook(book1);
-library.addBook(book2);
-library.addBook(book3);
-library.removeBook(2)
-console.log(library.findBookByTitle('First book'));
-console.log(library);
-
-
+const res = await sendMessage('20459', 'HELLO MY BOY');
+console.log(res);
