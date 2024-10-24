@@ -49,7 +49,29 @@ class OpenAIApi {
             };
         } catch (e) {
             console.log('Error while gpt chat', e.message)
-            console.log('Error while gpt chat', e.response.data);
+            console.log('Error while gpt chat', e.response?.data);
+        }
+    }
+
+    async translateText(text, targetLanguage) {
+        try {
+            // const response = await this.openai.chat.completions.create({
+            //     model: "gpt-4o",
+            //     messages
+            // });
+            const prompt = `Переведи следующий текст на ${targetLanguage}:\n\n"${text}"`;
+            const messages = [
+                {role: this.roles.USER, content: prompt}
+            ]
+            const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+                model: "gpt-4o-mini",
+                messages
+            }, this.config).then(data => data.data);
+
+            console.log(response.choices[0].message.content);
+            return response.choices[0].message.content;
+        } catch (e) {
+            console.log('Error while gpt translating text', e.message)
         }
     }
 

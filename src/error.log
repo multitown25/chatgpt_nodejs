@@ -600,3 +600,166 @@
     at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
     at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
     at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T10:10:29.884Z] Error: 400: Bad Request: wrong HTTP URL specified
+    at Telegram.callApi (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/core/network/client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///home/ram/WebstormProjects/chatGPT/src/index.js:336:9
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+[2024-10-24T10:12:54.435Z] Error: 400: Bad Request: wrong HTTP URL specified
+    at Telegram.callApi (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/core/network/client.js:315:19)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async file:///home/ram/WebstormProjects/chatGPT/src/index.js:336:9
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+[2024-10-24T10:13:17.206Z] Error: ENOENT: no such file or directory, realpath '../generated_image.png'
+    at async realpath (node:internal/fs/promises:1165:10)
+    at async attachFormMedia (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/core/network/client.js:208:28)
+    at async attachFormValue (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/core/network/client.js:190:12)
+    at async Promise.all (index 2)
+    at async buildFormDataConfig (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/core/network/client.js:115:5)
+    at async Telegram.callApi (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/core/network/client.js:297:15)
+    at async file:///home/ram/WebstormProjects/chatGPT/src/index.js:336:9
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+[2024-10-24T10:55:03.047Z] TypeError: Cannot read properties of undefined (reading 'content')
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:667:48
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T10:57:00.662Z] TypeError: Cannot read properties of undefined (reading 'content')
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:667:48
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T10:57:53.536Z] TypeError: Cannot read properties of undefined (reading 'content')
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:667:48
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T10:58:51.861Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:667:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:01:02.192Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:668:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:03:19.202Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:668:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:04:29.993Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:668:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:04:41.155Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:668:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:05:15.750Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:668:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:07:31.670Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:668:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:08:25.315Z] TypeError [ERR_INVALID_ARG_TYPE]: The "data" argument must be of type string or an instance of Buffer, TypedArray, or DataView. Received undefined
+    at Module.writeFile (node:internal/fs/promises:1198:5)
+    at writeToFileAndSend (file:///home/ram/WebstormProjects/chatGPT/src/index.js:93:18)
+    at file:///home/ram/WebstormProjects/chatGPT/src/index.js:668:15
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+    at async execute (/home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:518:17)
+    at async /home/ram/WebstormProjects/chatGPT/node_modules/telegraf/lib/composer.js:519:21
+[2024-10-24T11:20:51.939Z] FetchError: request to https://api.telegram.org/bot5753507047:[REDACTED]/sendMessage failed, reason: read ECONNRESET
+    at ClientRequest.<anonymous> (/home/ram/WebstormProjects/chatGPT/node_modules/node-fetch/lib/index.js:1501:11)
+    at ClientRequest.emit (node:events:519:28)
+    at emitErrorEvent (node:_http_client:103:11)
+    at TLSSocket.socketErrorListener (node:_http_client:506:5)
+    at TLSSocket.emit (node:events:519:28)
+    at emitErrorNT (node:internal/streams/destroy:170:8)
+    at emitErrorCloseNT (node:internal/streams/destroy:129:3)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)

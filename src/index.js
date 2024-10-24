@@ -18,7 +18,9 @@ import {marked} from 'marked';
 import {removeFile} from "./utils/removeFile.js";
 import {ogg} from "./ogg.js";
 import {rateLimiter} from "./middlewares/rateLimiter-middleware.js";
-import {dirname} from "path";
+import {dirname, resolve} from "path";
+import {stability} from "./services/stability.js";
+import {imageHelper} from "./imageHelper.js";
 
 
 const AVAILABLE_MODELS = [
@@ -59,7 +61,7 @@ const MESSAGES_DIR = path.join(__dirname, 'messages');
 // Функция для инициализации папки, если она не существует
 const initialize = async () => {
     try {
-        await fs.mkdir(MESSAGES_DIR, { recursive: true });
+        await fs.mkdir(MESSAGES_DIR, {recursive: true});
         console.log(`Папка для сообщений создана или уже существует: ${MESSAGES_DIR}`);
     } catch (error) {
         console.error('Ошибка при создании папки для сообщений:', error);
@@ -68,8 +70,6 @@ const initialize = async () => {
 
 // Вызов инициализации при запуске
 initialize();
-
-
 
 
 // Функция для записи ошибок в файл с временной меткой
@@ -93,7 +93,7 @@ async function writeToFileAndSend(ctx, messageText) {
         await fs.writeFile(filepath, messageText, 'utf-8');
         console.log(`Сообщение записано в файл: ${filepath}`);
 
-        await ctx.replyWithDocument({ source: filepath }, { caption: 'Ваше длинное сообщение сохранено и отправлено в файл.' });
+        await ctx.replyWithDocument({source: filepath}, {caption: 'Ваше длинное сообщение сохранено и отправлено в файл.'});
     } catch (error) {
         console.error('Ошибка при записи файла или отправке сообщения:', error);
         await ctx.reply('Произошла ошибка при обработке вашего сообщения. Пожалуйста, попробуйте позже.');
@@ -237,7 +237,7 @@ bot.command('start', async (ctx) => {
     const user = await UserService.getUser({telegramUsername: tgUsername});
 
     if (!user) {
-        await ctx.reply(welcomeMessage + `\n ${config.get('NOT_REGISTERED')}`);
+        await ctx.reply(`\n ${config.get('NOT_REGISTERED')}`);
         return;
     }
 
@@ -320,6 +320,48 @@ bot.command('test', async (ctx) => {
     // await ctx.replyWithMarkdown('### Заключение');
     // await ctx.reply('### Заключение');
 });
+
+
+bot.command('image', async (ctx) => {
+    console.log(typeof ctx.from.id);
+    console.log(ctx.from.id.toString());
+
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+    ctx.session.systemMessages.push({type: 'image', data: 'Генерация изображения'})
+
+    await ctx.reply('Введите запрос для генерации изображения')
+
+});
+
+async function generateImage(ctx) {
+
+
+    try {
+        // add opportunity to choose output format
+        const prompt = await openai.translateText(ctx.message.text, 'английский');
+        await ctx.reply(`'${prompt}'\n Принято! Генерация изображения..`);
+        const imageBuffer = await stability.generateImage(prompt);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images', `${filename}.png`)
+        const image = await imageHelper.saveImage(imageBuffer, imagePath);
+
+        await ctx.replyWithPhoto({source: image});
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+
+    } catch (err) {
+        console.log('Error from /image command', err);
+
+        if (err.response?.status === 403) {
+            await ctx.reply('Ошибка при генерации изображения. Система модерации контента Stability AI отметила некоторую часть вашего запроса и впоследствии отклонила его.')
+        }
+        throw err;
+    }
+}
 
 bot.action(/setModel_(.+)/, async (ctx) => {
     const selectedModel = ctx.match[1].replace("OpenAI", "").trim();
@@ -582,6 +624,11 @@ bot.on(message('text'), async (ctx) => {
             await deleteUser(ctx);
             return;
         }
+        console.log('LAST SYSTEM MESSAGE', lastSystemMessage);
+        if (lastSystemMessage?.type === 'image') {
+            await generateImage(ctx);
+            return;
+        }
 
         await ctx.reply(code('Сообщение принял. Жду ответ от сервера...'));
         // await ctx.reply(code(`Ваш запрос: ${ctx.message.text}`))
@@ -624,7 +671,7 @@ bot.on(message('text'), async (ctx) => {
 
     } catch (e) {
         console.log('Error from text message', e);
-        await writeToFileAndSend(ctx, response.content);
+        await writeToFileAndSend(ctx, response?.content);
         throw e;
     }
 });
@@ -668,7 +715,6 @@ const start = async () => {
     }).catch(err => {
         console.error('Error connecting to MongoDB', err);
     });
-
 
 
     bot.launch();
