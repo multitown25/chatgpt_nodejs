@@ -30,6 +30,7 @@ const verifySignature = (data, receivedSignature) => {
 
 router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res) => {
     const data = req.body;
+    console.log("WEBHOOK TINKOFF", data);
 
     // Проверка подписи
     const isValidSignature = verifySignature(data, data.Signature);

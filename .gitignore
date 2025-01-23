@@ -4,3 +4,4 @@
 /src/error.log
 /images
 src/.env
+src/services/openai.js
