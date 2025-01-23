@@ -18,7 +18,7 @@ class OpenAIApi {
             'Authorization': `Bearer ${config.get('OPENAI_TOKEN')}`,
             'Content-Type': 'application/json'
         },
-        httpsAgent: this.agent
+        // httpsAgent: this.agent
     }
 
     constructor(apiKey) {
