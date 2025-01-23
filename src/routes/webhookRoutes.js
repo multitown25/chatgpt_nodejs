@@ -48,6 +48,7 @@ router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res
 
         if (Status === 'CONFIRMED') {
             if (transaction.status !== 'completed') {
+                console.log('Transaction completed. Transaction status ', transaction.status);
                 transaction.status = 'completed';
                 await transaction.save();
 
@@ -55,6 +56,7 @@ router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res
                 const wallet = await Wallet.findById(transaction.wallet);
                 if (wallet) {
                     wallet.balance = parseFloat(wallet.balance) + parseFloat(Amount) / 100; // Конвертация из копеек
+                    console.log('Wallet balance = ', wallet);
                     await wallet.save();
                 }
             }
