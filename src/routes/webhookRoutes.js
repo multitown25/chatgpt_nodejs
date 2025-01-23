@@ -10,7 +10,7 @@ const TINKOFF_PASSWORD = process.env.TINKOFF_PASSWORD; // Пароль для п
 // Функция для проверки подписи
 const verifySignature = (data, receivedSignature) => {
     // 1. Исключаем поле Signature из данных
-    const { Signature, ...filteredData } = data;
+    const { Token, ...filteredData } = data;
 
     // 2. Добавляем поле Password
     const dataWithPassword = { ...filteredData, Password: TINKOFF_PASSWORD };
@@ -22,7 +22,7 @@ const verifySignature = (data, receivedSignature) => {
     const signatureString = sortedKeys.map(key => dataWithPassword[key]).join('');
 
     // 5. Вычисляем SHA-256 хеш и преобразуем его в верхний регистр
-    const calculatedSignature = crypto.createHash('sha256').update(signatureString).digest('hex').toUpperCase();
+    const calculatedSignature = crypto.createHash('sha256').update(signatureString).digest('hex');
 
     // 6. Сравниваем вычисленную подпись с полученной
     return calculatedSignature === receivedSignature;
