@@ -34,6 +34,7 @@ router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res
 
     // Проверка подписи
     const isValidSignature = verifySignature(data, data.Signature);
+    console.log(isValidSignature);
     if (!isValidSignature) {
         return res.status(400).send('Invalid signature');
     }
