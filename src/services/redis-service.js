@@ -1,6 +1,6 @@
 import redis from "redis";
 
-const redisURL = `redis://103.106.3.47:6379`;
+const redisURL = `redis://localhost:6379`;
 const redisClient = redis.createClient({
     url: redisURL
 });

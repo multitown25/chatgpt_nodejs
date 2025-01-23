@@ -1,4 +1,4 @@
-import {session, Telegraf, Markup} from 'telegraf';
+import {Markup, session, Telegraf} from 'telegraf';
 import config from 'config';
 import {message} from "telegraf/filters";
 import {code} from "telegraf/format";
@@ -13,14 +13,15 @@ import updateLastActivityMiddleware from "./middlewares/updateLastActivity-middl
 import * as path from "node:path";
 import {fileURLToPath} from 'url';
 import * as fs from "node:fs/promises";
-import redis from "redis";
-import {marked} from 'marked';
-import {removeFile} from "./utils/removeFile.js";
 import {ogg} from "./ogg.js";
 import {rateLimiter} from "./middlewares/rateLimiter-middleware.js";
-import {dirname, resolve} from "path";
+import {resolve} from "path";
 import {stability} from "./services/stability.js";
 import {imageHelper} from "./imageHelper.js";
+import axios from "axios";
+import dotenv from "dotenv";
+dotenv.config();
+import {createPayment} from "./services/paymentService.js";
 
 
 const AVAILABLE_MODELS = [
@@ -71,7 +72,6 @@ const initialize = async () => {
 // Вызов инициализации при запуске
 initialize();
 
-
 // Функция для записи ошибок в файл с временной меткой
 async function logError(error) {
     const errorMessage = `[${new Date().toISOString()}] ${error.stack || error}\n`;
@@ -102,7 +102,7 @@ async function writeToFileAndSend(ctx, messageText) {
 }
 
 bot.catch((err, ctx) => {
-    console.error(`Ошибка для пользователя ${ctx.from.id}:`, err);
+    console.error(`Ошибка для пользователя ${ctx.from.id}:`, err.stack);
     logError(err);
 });
 
@@ -115,9 +115,10 @@ bot.use(limiter);
 bot.telegram.setMyCommands([
     {command: '/start', description: 'Начать общение'},
     {command: '/register', description: 'Зарегистрировать нового пользователя'},
-    {command: '/model', description: 'Настройка модели OpenAI'},
+    {command: '/model_info', description: 'Настройка модели OpenAI'},
+    {command: '/change_permission', description: 'Изменить разрешения пользователя'},
     {command: '/new', description: 'Сбросить контекст'},
-    {command: '/showusers', description: 'Показать всех пользователей'},
+    {command: '/show_users', description: 'Показать всех пользователей'},
     {command: '/delete', description: 'Удалить пользователя'}
 ]);
 
@@ -129,7 +130,7 @@ bot.command('new', async (ctx) => {
     await ctx.reply('Контекст сброшен! Жду вашего сообщения');
 });
 
-bot.command('showusers', async (ctx) => {
+bot.command('show_users', async (ctx) => {
     try {
         const currentUser = await UserService.getUser({telegramId: ctx.from.id.toString()});
         const users = await UserService.getUsers({'company.name': currentUser.company.name});
@@ -274,6 +275,443 @@ bot.command('register', async (ctx) => {
             [Markup.button.callback('Отменить', 'close')]
         ]))
 });
+
+// Команда /pay
+bot.command('pay', async (ctx) => {
+    ctx.session.systemMessages.push({type: 'pay', data: ctx.message.text})
+
+    // Задаем сумму пополнения
+    await ctx.reply('Введите сумму для пополнения:');
+});
+
+// Константы
+const ALL_PERMISSIONS = [
+    'register', 'delete', 'show_users', 'text_messages', 'voice_messages',
+    'model_info', 'change_model', 'image', 'upscale', 'outpaint',
+    'replace', 'recolor', 'removebg', 'sketch', 'style', 'change_permission'
+];
+
+// Команда /change_permission
+bot.command('change_permission', async (ctx) => {
+    try {
+        // Получаем текущего пользователя
+        const currentUser = await UserService.getUser({telegramId: ctx.from.id.toString()});
+        if (!currentUser) {
+            return ctx.reply('❌ Пользователь не найден в системе.');
+        }
+
+        // Проверка, является ли пользователь администратором
+        await currentUser.populate('roleId');
+        if (currentUser.roleId.name !== 'admin') {
+            return ctx.reply('🔒 У вас нет доступа к этой команде.');
+        }
+
+        // Получаем всех пользователей той же компании
+        const companyName = currentUser.company.name;
+        const allUsers = await UserService.getUsersWithRoles({'company.name': companyName}).then(data => data.filter(item => item.telegramId));
+
+        if (allUsers.length === 0) {
+            return ctx.reply('📭 В вашей компании нет пользователей для управления.');
+        }
+
+        // Разделяем пользователей на страницы
+        const totalPages = Math.ceil(allUsers.length / USERS_PER_PAGE);
+        const pages = [];
+
+        for (let i = 0; i < totalPages; i++) {
+            const pageUsers = allUsers.slice(i * USERS_PER_PAGE, (i + 1) * USERS_PER_PAGE);
+            pages.push(pageUsers);
+        }
+
+        // Сохраняем в сессии
+        ctx.session.changePermission = {
+            pages: pages,
+            currentPage: 0,
+            totalPages: totalPages,
+        };
+
+        // Отправляем первую страницу
+        const firstPage = pages[0];
+        const userButtons = firstPage.map(user => [
+            Markup.button.callback(`${user.telegramId.toString()} (${user.telegramUsername})`, `select_user_${user._id}`)
+        ]);
+
+        const navigationButtons = [];
+        if (totalPages > 1) {
+            navigationButtons.push(Markup.button.callback('➡️ Вперед', `page_1`));
+        }
+
+        // Добавляем кнопку «Отмена» на всех этапах
+        navigationButtons.push(Markup.button.callback('❌ Отмена', 'cancel_change_permission'));
+
+        await ctx.reply(
+            '🛠 **Выберите пользователя для изменения разрешений:**',
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([...userButtons, navigationButtons])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при выполнении команды.');
+    }
+});
+
+// Обработчик навигации по страницам
+bot.action(/page_(\d+)/, async (ctx) => {
+    try {
+        const requestedPage = parseInt(ctx.match[1]); // Нулевая индексация
+        const sessionData = ctx.session.changePermission;
+
+        if (!sessionData) {
+            return ctx.reply('❗ Сессия не найдена. Пожалуйста, начните заново команду /change_permission.');
+        }
+
+        if (requestedPage < 0 || requestedPage >= sessionData.totalPages) {
+            return ctx.reply('❌ Недопустимая страница.');
+        }
+
+        // Обновляем текущую страницу в сессии
+        sessionData.currentPage = requestedPage;
+
+        const pageUsers = sessionData.pages[requestedPage];
+        console.log(pageUsers);
+        const userButtons = pageUsers.map(user => [
+            Markup.button.callback(`${user.telegramId.toString()} (${user.telegramUsername})`, `select_user_${user._id}`)
+        ]);
+
+        const navigationButtons = [];
+
+        if (sessionData.totalPages > 1) {
+            if (requestedPage > 0) {
+                navigationButtons.push(Markup.button.callback('⬅️ Назад', `page_${requestedPage - 1}`));
+            }
+            if (requestedPage < sessionData.totalPages - 1) {
+                navigationButtons.push(Markup.button.callback('➡️ Вперед', `page_${requestedPage + 1}`));
+            }
+        }
+
+        // Добавляем кнопку «Отмена»
+        navigationButtons.push(Markup.button.callback('❌ Отмена', 'cancel_change_permission'));
+
+        const pageNumber = requestedPage + 1;
+        const totalPages = sessionData.totalPages;
+
+        await ctx.editMessageText(
+            `🛠 **Выберите пользователя для изменения разрешений (Страница ${pageNumber} из ${totalPages}):**`,
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([...userButtons, navigationButtons])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при навигации по страницам.');
+    }
+});
+
+// Обработчик выбора пользователя
+bot.action(/select_user_(.+)/, async (ctx) => {
+    try {
+        const userId = ctx.match[1];
+        const selectedUser = await UserService.getUserWithRole({_id: userId});
+
+        if (!selectedUser) {
+            return ctx.reply('❌ Пользователь не найден.');
+        }
+
+        const effectivePermissions = await selectedUser.getEffectivePermissions();
+
+        // Кнопки для удаления разрешений
+        const permissionButtons = effectivePermissions.map(perm => [
+            Markup.button.callback(`❌ Удалить "${perm}"`, `remove_perm_${userId}_${perm}`)
+        ]);
+
+        // Разрешения, доступные для добавления
+        const availableToAdd = ALL_PERMISSIONS.filter(perm => !effectivePermissions.includes(perm));
+
+        const addButtons = availableToAdd.map(perm => [
+            Markup.button.callback(`✅ Добавить "${perm}"`, `add_perm_${userId}_${perm}`)
+        ]);
+
+        // Сохраняем выбранного пользователя в сессии
+        ctx.session.changePermission.selectedUser = {
+            id: userId,
+            telegramId: selectedUser.telegramId.toString(), // Можно заменить на более информативное поле, например, имя
+        };
+
+        await ctx.reply(
+            `🔹 **Разрешения пользователя:**
+${effectivePermissions.length > 0 ? effectivePermissions.join(', ') : 'Нет разрешений'}`,
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([
+                    [Markup.button.callback('➕ Добавить Разрешение', `show_add_${userId}`)],
+                    ...permissionButtons,
+                    [Markup.button.callback('🔙 Назад к списку пользователей', 'back_to_users')],
+                    [Markup.button.callback('❌ Закрыть', 'cancel_change_permission')]
+                ])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при выборе пользователя.');
+    }
+});
+
+// Обработчик добавления разрешения
+bot.action(/add_perm_(.+)_(.+)/, async (ctx) => {
+    try {
+        const userId = ctx.match[1];
+        const permission = ctx.match[2];
+
+        const user = await UserService.getUser({_id: userId});
+        if (!user) {
+            return ctx.reply('❌ Пользователь не найден.');
+        }
+
+        // Проверяем, не добавлено ли уже разрешение
+        if (user.customPermissions.add.includes(permission)) {
+            return ctx.reply(`⚠️ Разрешение "${permission}" уже добавлено.`);
+        }
+
+        // Добавляем разрешение
+        user.customPermissions.add.push(permission);
+        // Убираем из remove, если там есть
+        user.customPermissions.remove = user.customPermissions.remove.filter(perm => perm !== permission);
+        await user.save();
+
+        await ctx.answerCbQuery(`✅ Разрешение "${permission}" добавлено для пользователя.`);
+
+        // Обновляем сообщение с разрешениями
+        const effectivePermissions = await user.getEffectivePermissions();
+
+        await ctx.editMessageText(
+            `🔹 **Разрешения пользователя:**
+${effectivePermissions.length > 0 ? effectivePermissions.join(', ') : 'Нет разрешений'}`,
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([
+                    [Markup.button.callback('➕ Добавить Разрешение', `show_add_${userId}`)],
+                    ...effectivePermissions.map(perm => [
+                        Markup.button.callback(`❌ Удалить "${perm}"`, `remove_perm_${userId}_${perm}`)
+                    ]),
+                    [Markup.button.callback('🔙 Назад к списку пользователей', 'back_to_users')],
+                    [Markup.button.callback('❌ Закрыть', 'cancel_change_permission')] // Кнопка «Закрыть»
+                ])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при добавлении разрешения.');
+    }
+});
+
+// Обработчик удаления разрешения
+bot.action(/remove_perm_(.+)_(.+)/, async (ctx) => {
+    try {
+        const userId = ctx.match[1];
+        const permission = ctx.match[2];
+
+        const user = await UserService.getUser({_id: userId});
+        if (!user) {
+            return ctx.reply('❌ Пользователь не найден.');
+        }
+
+        // Проверяем, не удалено ли уже разрешение
+        if (user.customPermissions.remove.includes(permission)) {
+            return ctx.reply(`⚠️ Разрешение "${permission}" уже удалено.`);
+        }
+
+        // Добавляем разрешение в remove
+        user.customPermissions.remove.push(permission);
+        // Убираем из add, если там есть
+        user.customPermissions.add = user.customPermissions.add.filter(perm => perm !== permission);
+        await user.save();
+
+        await ctx.answerCbQuery(`✅ Разрешение "${permission}" удалено для пользователя.`);
+
+        // Обновляем сообщение с разрешениями
+        const effectivePermissions = await user.getEffectivePermissions();
+
+        await ctx.editMessageText(
+            `🔹 **Разрешения пользователя:**
+${effectivePermissions.length > 0 ? effectivePermissions.join(', ') : 'Нет разрешений'}`,
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([
+                    [Markup.button.callback('➕ Добавить Разрешение', `show_add_${userId}`)],
+                    ...effectivePermissions.map(perm => [
+                        Markup.button.callback(`❌ Удалить "${perm}"`, `remove_perm_${userId}_${perm}`)
+                    ]),
+                    [Markup.button.callback('🔙 Назад к списку пользователей', 'back_to_users')],
+                    [Markup.button.callback('❌ Закрыть', 'cancel_change_permission')] // Кнопка «Закрыть»
+                ])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при удалении разрешения.');
+    }
+});
+
+// Обработчик отображения доступных разрешений для добавления
+bot.action(/show_add_(.+)/, async (ctx) => {
+    try {
+        const userId = ctx.match[1];
+        const user = await UserService.getUserWithRole({_id: userId});
+        if (!user) {
+            return ctx.reply('❌ Пользователь не найден.');
+        }
+
+        const effectivePermissions = await user.getEffectivePermissions();
+        const availableToAdd = ALL_PERMISSIONS.filter(perm => !effectivePermissions.includes(perm));
+
+        if (availableToAdd.length === 0) {
+            return ctx.reply('📭 Нет доступных разрешений для добавления.');
+        }
+
+        const addButtons = availableToAdd.map(perm => [
+            Markup.button.callback(`✅ Добавить "${perm}"`, `add_perm_${userId}_${perm}`)
+        ]);
+
+        // Добавляем кнопку «Закрыть»
+        addButtons.push([Markup.button.callback('❌ Закрыть', 'cancel_change_permission')]);
+
+        await ctx.reply(
+            '🆕 **Выберите разрешение для добавления:**',
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([
+                    ...addButtons,
+                    [Markup.button.callback('🔙 Назад к разрешениям пользователя', 'back_to_user_permissions')]
+                ])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при отображении доступных разрешений.');
+    }
+});
+
+// Обработчик возврата к разрешениям выбранного пользователя
+bot.action('back_to_user_permissions', async (ctx) => {
+    try {
+        const selectedUser = ctx.session.changePermission.selectedUser;
+        if (!selectedUser || !selectedUser.id) {
+            return ctx.reply('❌ Информация о выбранном пользователе не найдена.');
+        }
+
+        const user = await UserService.getUserWithRole({_id: selectedUser.id});
+        if (!user) {
+            return ctx.reply('❌ Пользователь не найден.');
+        }
+
+        const effectivePermissions = await user.getEffectivePermissions();
+
+        await ctx.editMessageText(
+            `🔹 **Разрешения пользователя:**
+${effectivePermissions.length > 0 ? effectivePermissions.join(', ') : 'Нет разрешений'}`,
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([
+                    [Markup.button.callback('➕ Добавить Разрешение', `show_add_${selectedUser.id}`)],
+                    ...effectivePermissions.map(perm => [
+                        Markup.button.callback(`❌ Удалить "${perm}"`, `remove_perm_${selectedUser.id}_${perm}`)
+                    ]),
+                    [Markup.button.callback('🔙 Назад к списку пользователей', 'back_to_users')],
+                    [Markup.button.callback('❌ Закрыть', 'cancel_change_permission')] // Кнопка «Закрыть»
+                ])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при возврате к разрешениям пользователя.');
+    }
+});
+
+// Обработчик возврата к списку пользователей
+bot.action('back_to_users', async (ctx) => {
+    try {
+        const sessionData = ctx.session.changePermission;
+
+        if (!sessionData) {
+            return ctx.reply('❗ Сессия не найдена. Пожалуйста, начните заново команду /change_permission.');
+        }
+
+        const currentPage = sessionData.currentPage;
+        const pageUsers = sessionData.pages[currentPage];
+        const userButtons = pageUsers.map(user => [
+            Markup.button.callback(`${user.telegramId.toString()} (${user.telegramUsername})`, `select_user_${user._id}`)
+        ]);
+
+        const navigationButtons = [];
+
+        if (sessionData.totalPages > 1) {
+            if (currentPage > 0) {
+                navigationButtons.push(Markup.button.callback('⬅️ Назад', `page_${currentPage - 1}`));
+            }
+            if (currentPage < sessionData.totalPages - 1) {
+                navigationButtons.push(Markup.button.callback('➡️ Вперед', `page_${currentPage + 1}`));
+            }
+        }
+
+        // Добавляем кнопку «Закрыть»
+        navigationButtons.push(Markup.button.callback('❌ Закрыть', 'cancel_change_permission'));
+
+        const pageNumber = currentPage + 1;
+        const totalPages = sessionData.totalPages;
+
+        await ctx.editMessageText(
+            `🛠 **Выберите пользователя для изменения разрешений (Страница ${pageNumber} из ${totalPages}):**`,
+            {
+                parse_mode: 'Markdown',
+                ...Markup.inlineKeyboard([...userButtons, navigationButtons])
+            }
+        );
+
+    } catch (error) {
+        console.error(error);
+        ctx.reply('❌ Произошла ошибка при возврате к списку пользователей.');
+    }
+});
+
+/**
+ * Обработчик отмены процесса изменения разрешений
+ */
+bot.action('cancel_change_permission', async (ctx) => {
+    try {
+        // Очищаем данные процесса из сессии
+        ctx.session.changePermission = null;
+
+        // Отправляем сообщение об отмене
+        await ctx.reply('🛑 Процесс изменения разрешений отменён.');
+
+        // Можно также удалить сообщения с inline клавиатурами, если необходимо
+        if (ctx.callbackQuery.message) {
+            await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
+        }
+
+    } catch (error) {
+        console.error('Ошибка при отмене процесса:', error);
+        ctx.reply('❌ Произошла ошибка при отмене процесса.');
+    }
+});
+
+
+// // Обработчик для неизвестных действий
+// bot.on('callback_query', async (ctx) => {
+//     if (!ctx.callbackQuery) return;
+//     await ctx.answerCbQuery('❗ Неизвестное действие.');
+// });
+
 // вместо проверки контекста на каждой команде лучше добавить в middleware?
 bot.command('delete', async (ctx) => {
     ctx.session ??= {
@@ -287,7 +725,7 @@ bot.command('delete', async (ctx) => {
         ]))
 });
 
-bot.command('model', async (ctx) => {
+bot.command('model_info', async (ctx) => {
     // const
     const currentModel = await UserService.getUserModel(ctx.from.id.toString());
     let welcomeMessage = `Добро пожаловать в настройки ChatGPT!\n\nЗдесь вы можете настроить модель по своему усмотрению для более эффективного взаимодействия.\n
@@ -301,17 +739,6 @@ bot.command('model', async (ctx) => {
             [Markup.button.callback('Выбрать другую модель', 'changeModel')],
             [Markup.button.callback('Закрыть', 'close')],
         ]));
-});
-
-bot.action('changeModel', async (ctx) => {
-    console.log(ctx.update.callback_query.message.text);
-
-    const modelButtons = AVAILABLE_MODELS.map(model => {
-        return [Markup.button.callback(model.name, `setModel_${model.name}`)]
-    });
-
-    await ctx.editMessageText(ctx.update.callback_query.message.text, Markup.inlineKeyboard(modelButtons));
-    // await ctx.editMessageText(availableModels);
 });
 
 bot.command('test', async (ctx) => {
@@ -336,54 +763,81 @@ bot.command('image', async (ctx) => {
 
 });
 
-async function generateImage(ctx) {
+bot.command('upscale', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
 
+    ctx.session.systemMessages.push({type: 'upscale', data: 'Upscale изображения'})
+    await ctx.reply('Отправьте изображения. Обязательно оставьте галочку на сжатие')
 
-    try {
-        // add opportunity to choose output format
-        const prompt = await openai.translateText(ctx.message.text, 'английский');
-        await ctx.reply(`'${prompt}'\n Принято! Генерация изображения..`);
-        const imageBuffer = await stability.generateImage(prompt);
-
-        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
-        const imagePath = resolve(__dirname, '../images', `${filename}.png`)
-        const image = await imageHelper.saveImage(imageBuffer, imagePath);
-
-        await ctx.replyWithPhoto({source: image});
-        ctx.session.systemMessages = [];
-        console.log(ctx.session);
-
-    } catch (err) {
-        console.log('Error from /image command', err);
-
-        if (err.response?.status === 403) {
-            await ctx.reply('Ошибка при генерации изображения. Система модерации контента Stability AI отметила некоторую часть вашего запроса и впоследствии отклонила его.')
-        }
-        throw err;
-    }
-}
-
-bot.action(/setModel_(.+)/, async (ctx) => {
-    const selectedModel = ctx.match[1].replace("OpenAI", "").trim();
-
-    // await ctx.editMessageText(`Вы выбрали модель: ${selectedModel}`);
-    const response = await UserService.setUserModel(ctx.from.id.toString(), selectedModel);
-
-    if (response) {
-        await ctx.editMessageText(`Успешно! Вы выбрали модель: ${selectedModel}.`);
-    } else {
-        await ctx.editMessageText(`Something wrong..`);
-    }
-    // console.log(response);
 });
 
-bot.action('close', async (ctx) => {
-    if (ctx.session) {
-        ctx.session.systemMessages = [];
-    }
+bot.command('outpaint', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
 
-    await ctx.editMessageReplyMarkup();
-    await ctx.editMessageText("Действие отменено.");
+    ctx.session.systemMessages.push({type: 'outpaint', data: 'Outpaint изображения'})
+    await ctx.reply('Отправьте изображения. Обязательно оставьте галочку на сжатие')
+
+});
+
+bot.command('replace', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+
+    ctx.session.systemMessages.push({type: 'replace', data: 'Replace изображения'})
+    await ctx.reply('Отправьте изображения. Обязательно оставьте галочку на сжатие')
+
+});
+
+bot.command('recolor', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+
+    ctx.session.systemMessages.push({type: 'recolor', data: 'Recolor изображения'})
+    await ctx.reply('Отправьте изображения. Обязательно оставьте галочку на сжатие')
+
+});
+
+bot.command('removebg', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+
+    ctx.session.systemMessages.push({type: 'removebg', data: 'Remove background изображения'})
+    await ctx.reply('Отправьте изображения. Обязательно оставьте галочку на сжатие')
+
+});
+
+bot.command('sketch', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+
+    ctx.session.systemMessages.push({type: 'sketch', data: 'Sketch изображения'})
+    await ctx.reply('Отправьте изображения. Обязательно оставьте галочку на сжатие')
+
+});
+
+bot.command('style', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+
+    ctx.session.systemMessages.push({type: 'style', data: 'Style изображения'})
+    await ctx.reply('Отправьте изображения. Обязательно оставьте галочку на сжатие')
+
 });
 
 function splitMessage(text, maxLength = 4096) {
@@ -505,13 +959,43 @@ function splitMessage(text, maxLength = 4096) {
     return messages;
 }
 
+async function payment(ctx) {
+    try {
+        if (!ctx.user.company.id) {
+            return ctx.reply('У вашей компании нет привязанного кошелька.');
+        }
+
+        // Ожидаем ввода суммы
+        const amount = parseFloat(ctx.message.text);
+        if (isNaN(amount) || amount <= 0) {
+            return ctx.reply('Пожалуйста, введите корректную сумму.');
+        }
+
+        const description = `Пополнение баланса пользователя ${ctx.user.telegramUsername}`;
+        const response = await axios.post(`http://ch.flx-it.ru:8020/payment/create-payment`, {
+            companyId: ctx.user.company.id,
+            amount: amount,
+            description: description
+        });
+
+        const {confirmationUrl} = response.data;
+        if (confirmationUrl) {
+            await ctx.reply(`Пожалуйста, оплатите по ссылке: ${confirmationUrl}`);
+        } else {
+            await ctx.reply('Произошла ошибка при создании платежа. Пожалуйста, попробуйте позже.');
+        }
+    } catch (error) {
+        console.error('Pay command error:', error);
+        ctx.reply('Произошла ошибка при обработке запроса.');
+    }
+}
 
 async function register(ctx) {
     const inputDataArr = ctx.message.text.split('\n');
     const data = {
         roleName: inputDataArr[0],
         companyName: await CompanyService.getCompanyNameByUserTgId(ctx.from.id.toString()),
-        telegramUsername: inputDataArr[1]
+        telegramUsername: inputDataArr[1].replace("@", "")
     }
 
     ctx.session.systemMessages.push({type: 'registerConfirm', data})
@@ -577,6 +1061,211 @@ async function updateUser(ctx) {
     }
 }
 
+async function downloadImageFromTgServers(ctx) {
+    try {
+        const photoArray = ctx.message.photo;
+        if (photoArray.length > 0) {
+            await ctx.reply(`Изображение принято! Обработка..`);
+        }
+
+        const photo = photoArray[photoArray.length - 1];
+        const fileId = photo.file_id;
+
+        const file = await ctx.telegram.getFile(fileId);
+        console.log(file);
+        const fileUrl = `https://api.telegram.org/file/bot${config.get('TG_BOT_TOKEN')}/${file.file_path}`;
+
+        const fileName = `photo_${fileId}.png`; // Вы можете изменить расширение в зависимости от типа изображения
+        const filePath = path.resolve(__dirname, '../images/downloads', fileName);
+
+        return await imageHelper.downloadImage(fileUrl, filePath);
+
+        // return fileName;
+    } catch (err) {
+        console.log('Error while downloading image from tg servers', err);
+        throw err;
+    }
+}
+
+async function generateImage(ctx) {
+    try {
+        // add opportunity to choose output format
+        const prompt = await openai.translateText(ctx.message.text, 'английский');
+        await ctx.reply(`'${prompt}'\n Принято! Генерация изображения..`);
+        const imageBuffer = await stability.generateImage(prompt, ctx.from.id.toString());
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images', `${filename}.png`)
+        const image = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        await ctx.replyWithPhoto({source: image});
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+
+    } catch (err) {
+        console.log('Error from /image command', err);
+
+        if (err.response?.status === 403) {
+            await ctx.reply('Ошибка при генерации изображения. Система модерации контента Stability AI отметила некоторую часть вашего запроса и впоследствии отклонила его.')
+        }
+        throw err;
+    }
+}
+
+async function upscaleImage(ctx) {
+    try {
+        await ctx.reply(`Принято! Upscale изображения..`);
+        const inputFile = await downloadImageFromTgServers(ctx);
+        await ctx.replyWithPhoto({source: inputFile});
+
+        const imageBuffer = await stability.upscaleImage(inputFile);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images/upscale', `${filename}.png`)
+        const outputImage = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+        return outputImage;
+
+    } catch (err) {
+        console.log('Error from upscale image function', err.stack);
+        throw err;
+    }
+}
+
+async function outpaintImage(ctx) {
+    try {
+        await ctx.reply(`Принято! Outpaint изображения..`);
+        const inputFile = await downloadImageFromTgServers(ctx);
+        await ctx.replyWithPhoto({source: inputFile});
+
+        const imageBuffer = await stability.outpaintImage(inputFile);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images/outpaint', `${filename}.png`)
+        const outputImage = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+        return outputImage;
+
+    } catch (err) {
+        // console.log('Error from erase image function', err.stack);
+        throw err;
+    }
+}
+
+async function searchAndReplaceImage(ctx) {
+    try {
+        await ctx.reply(`Принято! Search and replace изображения..`);
+        const inputFile = await downloadImageFromTgServers(ctx);
+        await ctx.replyWithPhoto({source: inputFile});
+
+        const imageBuffer = await stability.searchAndReplaceImage(inputFile);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images/search-and-replace', `${filename}.png`)
+        const outputImage = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+        return outputImage;
+
+    } catch (err) {
+        // console.log('Error from erase image function', err.stack);
+        throw err;
+    }
+}
+
+async function searchAndRecolorImage(ctx) {
+    try {
+        await ctx.reply(`Принято! Search and recolor изображения..`);
+        const inputFile = await downloadImageFromTgServers(ctx);
+        await ctx.replyWithPhoto({source: inputFile});
+
+        const imageBuffer = await stability.searchAndRecolorImage(inputFile);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images/search-and-recolor', `${filename}.png`)
+        const outputImage = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+        return outputImage;
+
+    } catch (err) {
+        // console.log('Error from erase image function', err.stack);
+        throw err;
+    }
+}
+
+async function removeBackgroundImage(ctx) {
+    try {
+        await ctx.reply(`Принято! Remove background изображения..`);
+        const inputFile = await downloadImageFromTgServers(ctx);
+        await ctx.replyWithPhoto({source: inputFile});
+
+        const imageBuffer = await stability.removeBackgroundImage(inputFile);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images/remove-background', `${filename}.png`)
+        const outputImage = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+        return outputImage;
+
+    } catch (err) {
+        // console.log('Error from erase image function', err.stack);
+        throw err;
+    }
+}
+
+async function sketchImage(ctx) {
+    try {
+        await ctx.reply(`Принято! Sketch изображения..`);
+        const inputFile = await downloadImageFromTgServers(ctx);
+        await ctx.replyWithPhoto({source: inputFile});
+
+        const imageBuffer = await stability.sketchImage(inputFile);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images/sketch', `${filename}.png`)
+        const outputImage = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+        return outputImage;
+
+    } catch (err) {
+        // console.log('Error from erase image function', err.stack);
+        throw err;
+    }
+}
+
+async function styleImage(ctx) {
+    try {
+        await ctx.reply(`Принято! Style изображения..`);
+        const inputFile = await downloadImageFromTgServers(ctx);
+        await ctx.replyWithPhoto({source: inputFile});
+
+        const imageBuffer = await stability.styleImage(inputFile);
+
+        const filename = ctx.from.id.toString() + '_' + new Date().toISOString();
+        const imagePath = resolve(__dirname, '../images/style', `${filename}.png`)
+        const outputImage = await imageHelper.saveImageBuffer(imageBuffer, imagePath);
+
+        ctx.session.systemMessages = [];
+        console.log(ctx.session);
+        return outputImage;
+
+    } catch (err) {
+        // console.log('Error from erase image function', err.stack);
+        throw err;
+    }
+}
+
 bot.on(message('voice'), async (ctx) => {
     ctx.session ??= {
         messages: [],
@@ -603,6 +1292,59 @@ bot.on(message('voice'), async (ctx) => {
     }
 })
 
+bot.on('photo', async (ctx) => {
+    ctx.session ??= {
+        messages: [],
+        systemMessages: []
+    };
+
+    try {
+        const lastSystemMessage = ctx.session.systemMessages[ctx.session.systemMessages.length - 1];
+
+        if (lastSystemMessage?.type === 'upscale') {
+            const outputImage = await upscaleImage(ctx);
+            return await ctx.replyWithPhoto({source: outputImage});
+        }
+
+        if (lastSystemMessage?.type === 'outpaint') {
+            const outputImage = await outpaintImage(ctx);
+            return await ctx.replyWithPhoto({source: outputImage});
+        }
+
+        if (lastSystemMessage?.type === 'replace') {
+            const outputImage = await searchAndReplaceImage(ctx);
+            return await ctx.replyWithPhoto({source: outputImage});
+        }
+
+        if (lastSystemMessage?.type === 'recolor') {
+            const outputImage = await searchAndRecolorImage(ctx);
+            return await ctx.replyWithPhoto({source: outputImage});
+        }
+
+        if (lastSystemMessage?.type === 'removebg') {
+            const outputImage = await removeBackgroundImage(ctx);
+            return await ctx.replyWithPhoto({source: outputImage});
+        }
+
+        if (lastSystemMessage?.type === 'sketch') {
+            const outputImage = await sketchImage(ctx);
+            return await ctx.replyWithPhoto({source: outputImage});
+        }
+
+        if (lastSystemMessage?.type === 'style') {
+            const outputImage = await styleImage(ctx);
+            return await ctx.replyWithPhoto({source: outputImage});
+        }
+
+
+        // await ctx.replyWithPhoto({source: outputImage});
+
+    } catch (err) {
+        // console.log('Error from photo message', err);
+        throw err;
+    }
+});
+
 bot.on(message('text'), async (ctx) => {
     ctx.session ??= {
         messages: [],
@@ -624,17 +1366,24 @@ bot.on(message('text'), async (ctx) => {
             await deleteUser(ctx);
             return;
         }
-        console.log('LAST SYSTEM MESSAGE', lastSystemMessage);
+
         if (lastSystemMessage?.type === 'image') {
             await generateImage(ctx);
             return;
         }
 
+        if (lastSystemMessage?.type === 'pay') {
+            await payment(ctx);
+            return;
+        }
+
+        if (lastSystemMessage !== undefined) {
+            await ctx.reply('Вы ввели текстовое сообщение. Отмена предыдущей операции..');
+            ctx.session.systemMessages = [];
+        }
+
         await ctx.reply(code('Сообщение принял. Жду ответ от сервера...'));
-        // await ctx.reply(code(`Ваш запрос: ${ctx.message.text}`))
-        // await ctx.reply(JSON.stringify(ctx.message, null, 2));
         ctx.session.messages.push({role: openai.roles.USER, content: ctx.message.text})
-        // const messages = [{role: openai.roles.USER, content: ctx.message.text}];
         // await ctx.reply(JSON.stringify(ctx.session, null, 2));
 
         const model = await UserService.getUserModel(ctx.from.id.toString());
@@ -643,20 +1392,13 @@ bot.on(message('text'), async (ctx) => {
 
         ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response.content})
 
-        // const text = escapeMarkdownV2(response.content);
-        // console.log(text.length);
-
         const splittedText = splitMessage(response.content, 4000);
         for await (const chunk of splittedText) {
             console.log('chunk length', chunk.length);
             await ctx.reply(chunk, {parse_mode: 'Markdown', disable_web_page_preview: true});
         }
 
-        // console.log(response.content.length)
-        // await ctx.reply(response.content);
         const user = await UserService.getUser({telegramId: ctx.from.id.toString()});
-        console.log('USER', user);
-        // const model = await ModelService.getModelById(user.modelId);
         const request = await RequestService.create(
             model.name,
             user._id,
@@ -674,6 +1416,40 @@ bot.on(message('text'), async (ctx) => {
         await writeToFileAndSend(ctx, response?.content);
         throw e;
     }
+});
+
+bot.action('changeModel', async (ctx) => {
+    console.log(ctx.update.callback_query.message.text);
+
+    const modelButtons = AVAILABLE_MODELS.map(model => {
+        return [Markup.button.callback(model.name, `setModel_${model.name}`)]
+    });
+
+    await ctx.editMessageText(ctx.update.callback_query.message.text, Markup.inlineKeyboard(modelButtons));
+    // await ctx.editMessageText(availableModels);
+});
+
+bot.action(/setModel_(.+)/, async (ctx) => {
+    const selectedModel = ctx.match[1].replace("OpenAI", "").trim();
+
+    // await ctx.editMessageText(`Вы выбрали модель: ${selectedModel}`);
+    const response = await UserService.setUserModel(ctx.from.id.toString(), selectedModel);
+
+    if (response) {
+        await ctx.editMessageText(`Успешно! Вы выбрали модель: ${selectedModel}.`);
+    } else {
+        await ctx.editMessageText(`Something wrong..`);
+    }
+    // console.log(response);
+});
+
+bot.action('close', async (ctx) => {
+    if (ctx.session) {
+        ctx.session.systemMessages = [];
+    }
+
+    await ctx.editMessageReplyMarkup();
+    await ctx.editMessageText("Действие отменено.");
 });
 
 bot.action('register', async (ctx) => {

@@ -12,8 +12,8 @@ export default async function updateLastActivityMiddleware(ctx, next) {
         });
     }
 
-    console.log('LOG FROM LAST ACTIVITY');
-    console.log(updateResponse);
+    // console.log('LOG FROM LAST ACTIVITY');
+    // console.log(updateResponse);
 
     return next();
 }

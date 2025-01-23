@@ -2,3 +2,5 @@
 /node_modules
 .idea
 /src/error.log
+/images
+src/.env

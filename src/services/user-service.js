@@ -46,9 +46,41 @@ class UserService {
         }
     }
 
+    async getUserWithRole(filter) {
+        try {
+            const user = await User.findOne(filter).populate('roleId');
+
+            if (!user) {
+                console.log('User not found');
+                return null;
+                // throw new Error('User not found');
+            }
+            return user;
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }
+
     async getUsers(filter) {
         try {
             const users = await User.find(filter);
+
+            if (!users) {
+                console.log('Users not found');
+                return null;
+                // throw new Error('User not found');
+            }
+            return users;
+        } catch (err) {
+            console.error(err);
+            throw err;
+        }
+    }
+
+    async getUsersWithRoles(filter) {
+        try {
+            const users = await User.find(filter).populate('roleId');
 
             if (!users) {
                 console.log('Users not found');
@@ -97,6 +129,23 @@ class UserService {
             throw error;
         }
     }
+    async getUserImageGeneratorModel(telegramId) {
+        try {
+            const user = await User.findOne({telegramId}).populate('imageGeneratorModel');
+
+            if (user && user.imageGeneratorModel) {
+                console.log('Название модели генератора изображений пользователя:', user.imageGeneratorModel.name);
+                return user.imageGeneratorModel;
+            } else {
+                console.log('Модель не назначена или пользователь не найден.');
+                return null;
+            }
+        } catch (error) {
+            console.error('Ошибка при получении пользователя:', error);
+            throw error;
+        }
+    }
+
 
     async setUserModel(telegramId, modelName) {
         try {
