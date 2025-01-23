@@ -10,7 +10,7 @@ const TINKOFF_TERMINAL_KEY = process.env.TINKOFF_TERMINAL_KEY; // Terminal ID
 const TINKOFF_PASSWORD = process.env.TINKOFF_PASSWORD; // Пароль
 const TINKOFF_URL = 'https://securepay.tinkoff.ru/v2/Init';
 
-const createPayment = async (companyId, amount, description, orderId) => {
+const createPayment = async (companyId, amount, description, orderId, chatId) => {
     const wallet = await Wallet.findOne({ company: companyId });
     if (!wallet) throw new Error('Wallet not found');
 
@@ -19,6 +19,7 @@ const createPayment = async (companyId, amount, description, orderId) => {
         wallet: wallet._id,
         amount: amount,
         type: 'income',
+        chatId: chatId,
         description: description,
         status: 'pending',
     });

@@ -48,7 +48,7 @@ npm install redis
 
 ## Шаг 4: Подключение к Redis и выполнение базовых операций
 
-Создайте файл `index.js` и добавьте следующий код:
+Создайте файл `bot.js` и добавьте следующий код:
 
 ```javascript
 const redis = require('redis');
@@ -120,7 +120,7 @@ main().catch(console.error);
 Запустите скрипт командой:
 
 ```bash
-node index.js
+node bot.js
 ```
 
 Вы должны увидеть вывод:

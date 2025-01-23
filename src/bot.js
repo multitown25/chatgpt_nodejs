@@ -977,6 +977,7 @@ async function payment(ctx) {
         const response = await axios.post(`http://ch.flx-it.ru:8020/payment/create-payment`, {
             companyId: ctx.user.company.id,
             amount: amount,
+            chatId: ctx.chat.id,
             description: description
         });
 
@@ -1502,3 +1503,5 @@ start();
 
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+export default bot;

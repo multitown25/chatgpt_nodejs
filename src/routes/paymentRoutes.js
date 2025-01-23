@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post('/create-payment', async (req, res) => {
     try {
-        const { companyId, amount, description } = req.body;
+        const { companyId, amount, description, chatId } = req.body;
         if (!companyId || !amount || !description) {
             return res.status(400).json({ error: 'Missing required fields' });
         }
 
         const orderId = uuidv4(); // Генерация уникального OrderId
-        const confirmationUrl = await createPayment(companyId, amount, description, orderId);
+        const confirmationUrl = await createPayment(companyId, amount, description, orderId, chatId);
         res.json({ confirmationUrl });
     } catch (error) {
         console.error('Create payment error:', error);

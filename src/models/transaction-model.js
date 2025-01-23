@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import {Schema, model} from 'mongoose';
 
 const TransactionSchema = new Schema({
     wallet: {
@@ -21,6 +21,10 @@ const TransactionSchema = new Schema({
     tinkoffPaymentId: {
         type: String, // ID платежа из Тинькофф для отслеживания
         required: false
+    },
+    chatId: {
+        type: Number,
+        required: true
     },
     status: {
         type: String,
