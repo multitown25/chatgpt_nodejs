@@ -42,6 +42,7 @@ router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res
 
     try {
         const transaction = await Transaction.findOne({ tinkoffPaymentId: PaymentId });
+        console.log('Transaction', transaction);
         if (!transaction) {
             return res.status(404).send('Transaction not found');
         }
