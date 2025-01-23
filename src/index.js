@@ -281,7 +281,9 @@ bot.command('pay', async (ctx) => {
     ctx.session.systemMessages.push({type: 'pay', data: ctx.message.text})
 
     // Задаем сумму пополнения
-    await ctx.reply('Введите сумму для пополнения:');
+    await ctx.reply('Введите сумму для пополнения:', Markup.inlineKeyboard([
+        [Markup.button.callback('Отменить', 'close')]
+    ]));
 });
 
 // Константы
@@ -1005,7 +1007,7 @@ async function register(ctx) {
     await ctx.reply(`Вы хотите зарегистрировать следующего пользователя?\n\n${newUserText}`,
         Markup.inlineKeyboard([
             [Markup.button.callback('Да', 'register')],
-            [Markup.button.callback('Нет..', 'registerCancel')]
+            [Markup.button.callback('Нет..', 'cancel')]
         ]));
     // ctx.session.messages.pop(); // очистка контекста
 }
@@ -1471,9 +1473,9 @@ bot.action('register', async (ctx) => {
     }
 });
 
-bot.action('registerCancel', async (ctx) => {
+bot.action('cancel', async (ctx) => {
     await ctx.editMessageReplyMarkup();
-    await ctx.editMessageText('Отмена регистрации..')
+    await ctx.editMessageText('Отмена действия..')
 
     setTimeout(async () => {
         await ctx.editMessageText('Отменено.');
