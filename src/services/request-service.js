@@ -1,23 +1,24 @@
 import Request from '../models/request-model.js';
 
 class RequestService {
-    async create(model, userId, inputMessage, outputMessage, promptTokens, completionTokens, totalTokens, price) {
-        try {
-            const newRequest = await Request.create({
-                userId,
-                model,
-                inputMessage,
-                outputMessage,
-                promptTokens,
-                completionTokens,
-                totalTokens,
-                price
-            });
+    async create(modelName, userId, companyId, inputMsg, outputMsg, promptTokens, completionTokens, totalTokens, price, options = {}) {
+        const { session } = options;
+        const request = new Request({
+            model: modelName,
+            userId: userId,
+            companyId: companyId,
+            inputMessage: inputMsg,
+            outputMessage: outputMsg,
+            promptTokens: promptTokens,
+            completionTokens: completionTokens,
+            totalTokens: totalTokens,
+            price: price
+        });
 
-            return newRequest;
-        } catch (e) {
-            console.log(e);
-            throw e;
+        if (session) {
+            await request.save({ session });
+        } else {
+            await request.save();
         }
     }
 }

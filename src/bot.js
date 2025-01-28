@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import UserService from "./services/user-service.js";
 import CompanyService from "./services/company-service.js";
 import RequestService from "./services/request-service.js";
+import Wallet from "./models/wallet-model.js"
 import updateLastActivityMiddleware from "./middlewares/updateLastActivity-middleware.js";
 import * as path from "node:path";
 import {fileURLToPath} from 'url';
@@ -290,7 +291,7 @@ bot.command('pay', async (ctx) => {
 const ALL_PERMISSIONS = [
     'register', 'delete', 'show_users', 'text_messages', 'voice_messages',
     'model_info', 'change_model', 'image', 'upscale', 'outpaint',
-    'replace', 'recolor', 'removebg', 'sketch', 'style', 'change_permission'
+    'replace', 'recolor', 'removebg', 'sketch', 'style', 'change_permission', 'new', 'pay'
 ];
 
 // Команда /change_permission
@@ -1354,29 +1355,42 @@ bot.on(message('text'), async (ctx) => {
         systemMessages: []
     };
     let response;
+
+    const session = await mongoose.startSession(); // Начало сессии для транзакции
+    session.startTransaction();
     try {
         // console.log(ctx.from);
         const lastSystemMessage = ctx.session.systemMessages[ctx.session.systemMessages.length - 1];
         if (lastSystemMessage?.type === 'register') { // type?
             await register(ctx);
+            await session.commitTransaction();
+            session.endSession();
             return;
         }
         if (lastSystemMessage?.type === 'updateUser') {
             await updateUser(ctx);
+            await session.commitTransaction();
+            session.endSession();
             return;
         }
         if (lastSystemMessage?.type === 'delete') {
             await deleteUser(ctx);
+            await session.commitTransaction();
+            session.endSession();
             return;
         }
 
         if (lastSystemMessage?.type === 'image') {
             await generateImage(ctx);
+            await session.commitTransaction();
+            session.endSession();
             return;
         }
 
         if (lastSystemMessage?.type === 'pay') {
             await payment(ctx);
+            await session.commitTransaction();
+            session.endSession();
             return;
         }
 
@@ -1386,12 +1400,61 @@ bot.on(message('text'), async (ctx) => {
         }
 
         await ctx.reply(code('Сообщение принял. Жду ответ от сервера...'));
+
+        const user = ctx.user;
+        const wallet = await Wallet.findOne({ company: user.company.id }).session(session);
+        if (!wallet) {
+            await ctx.reply('Кошелек компании не найден.');
+            await session.abortTransaction();
+            session.endSession();
+            return;
+        }
+
+        // Проверка наличия баланса в кошельке
+        if (wallet.balance === undefined || wallet.balance === null) {
+            await ctx.reply('У кошелька компании отсутствует баланс.');
+            await session.abortTransaction();
+            session.endSession();
+            return;
+        }
+
+        const model = await UserService.getUserModel(ctx.from.id.toString());
+        if (!model) {
+            await ctx.reply('Модель пользователя не найдена.');
+            await session.abortTransaction();
+            session.endSession();
+            return;
+        }
+
         ctx.session.messages.push({role: openai.roles.USER, content: ctx.message.text})
         // await ctx.reply(JSON.stringify(ctx.session, null, 2));
 
-        const model = await UserService.getUserModel(ctx.from.id.toString());
-        console.log('MODEL', model);
         response = await openai.chat(ctx.session.messages, model.name);
+
+        const { promptTokens, completionTokens, totalTokens } = response.tokens;
+        const price = (promptTokens * model.inputPrice) + (completionTokens * model.outputPrice);
+
+        const requestPrice = parseFloat(price.toString());
+
+        // Попытка списания средств атомарно с условием достаточности баланса
+        const updatedWallet = await Wallet.findOneAndUpdate(
+            {
+                _id: wallet._id,
+                balance: { $gte: requestPrice } // Условие достаточности баланса
+            },
+            {
+                $inc: { balance: -requestPrice },
+                $set: { updatedAt: Date.now() }
+            },
+            { new: true, session }
+        );
+
+        if (!updatedWallet) {
+            await ctx.reply('На кошельке компании недостаточно средств для выполнения запроса.');
+            await session.abortTransaction();
+            session.endSession();
+            return;
+        }
 
         ctx.session.messages.push({role: openai.roles.ASSISTANT, content: response.content})
 
@@ -1401,21 +1464,27 @@ bot.on(message('text'), async (ctx) => {
             await ctx.reply(chunk, {parse_mode: 'Markdown', disable_web_page_preview: true});
         }
 
-        const user = await UserService.getUser({telegramId: ctx.from.id.toString()});
-        const request = await RequestService.create(
+        const requestRecord = await RequestService.create(
             model.name,
             user._id,
+            user.company.id,
             ctx.message.text,
             response.content,
-            response.tokens.promptTokens,
-            response.tokens.completionTokens,
-            response.tokens.totalTokens,
-            (response.tokens.promptTokens * model.inputPrice) + (response.tokens.completionTokens * model.outputPrice)
+            promptTokens,
+            completionTokens,
+            totalTokens,
+            mongoose.Types.Decimal128.fromString(requestPrice),
+            { session }
         );
-        // console.log(request);
+
+        // Фиксация транзакции
+        await session.commitTransaction();
+        session.endSession();
 
     } catch (e) {
         console.log('Error from text message', e);
+        await session.abortTransaction();
+        session.endSession();
         await writeToFileAndSend(ctx, response?.content);
         throw e;
     }
