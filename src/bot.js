@@ -1473,7 +1473,7 @@ bot.on(message('text'), async (ctx) => {
             promptTokens,
             completionTokens,
             totalTokens,
-            mongoose.Types.Decimal128.fromString(requestPrice),
+            mongoose.Types.Decimal128.fromString(requestPrice.toFixed(10)),
             { session }
         );
 
