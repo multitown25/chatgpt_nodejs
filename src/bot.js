@@ -22,6 +22,9 @@ import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
 import {createPayment} from "./services/paymentService.js";
+import express from "express";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import webhookRoutes from "./routes/webhookRoutes.js";
 
 
 const AVAILABLE_MODELS = [
@@ -1553,6 +1556,21 @@ bot.action('cancel', async (ctx) => {
     ctx.session.systemMessages = [];
 });
 
+const app = express();
+
+// Middleware
+app.use(express.json());
+
+// Маршруты
+app.use('/payment', paymentRoutes);
+app.use('/webhook', webhookRoutes);
+
+// Обработка ошибок
+app.use((err, req, res, next) => {
+    console.error('Unhandled error:', err);
+    res.status(500).json({ error: 'Internal Server Error' });
+});
+
 const start = async () => {
     await mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
@@ -1561,6 +1579,10 @@ const start = async () => {
         console.log('Successfully connected to MongoDB');
     }).catch(err => {
         console.error('Error connecting to MongoDB', err);
+    });
+
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
     });
 
 
