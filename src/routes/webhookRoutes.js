@@ -2,7 +2,7 @@ import express from 'express';
 import Transaction from '../models/transaction-model.js';
 import Wallet from '../models/wallet-model.js';
 import crypto from 'crypto';
-// import bot from '../bot.js';
+import bot from "../bot.js";
 
 const router = express.Router();
 
@@ -77,14 +77,14 @@ router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res
             sendMessage = true;
         }
 
-        // if (sendMessage && transaction.chatId) {
-        //     try {
-        //         await bot.telegram.sendMessage(transaction.chatId, message);
-        //         console.log(`Уведомление отправлено пользователю с chatId: ${transaction.chatId}`);
-        //     } catch (err) {
-        //         console.error('Error sending message via Telegram:', err);
-        //     }
-        // }
+        if (sendMessage && transaction.chatId) {
+            try {
+                await bot.telegram.sendMessage(transaction.chatId, message);
+                console.log(`Уведомление отправлено пользователю с chatId: ${transaction.chatId}`);
+            } catch (err) {
+                console.error('Error sending message via Telegram:', err);
+            }
+        }
 
         res.status(200).send('OK');
     } catch (error) {

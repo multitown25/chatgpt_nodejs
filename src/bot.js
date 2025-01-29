@@ -1410,7 +1410,7 @@ bot.on(message('text'), async (ctx) => {
             return;
         }
 
-        // Проверка наличия баланса в кошельке
+        // проверка наличия баланса в кошельке
         if (wallet.balance === undefined || wallet.balance === null) {
             await ctx.reply('У кошелька компании отсутствует баланс.');
             await session.abortTransaction();
@@ -1436,11 +1436,11 @@ bot.on(message('text'), async (ctx) => {
 
         const requestPrice = parseFloat(price.toString());
 
-        // Попытка списания средств атомарно с условием достаточности баланса
+        // попытка списания средств атомарно с условием достаточности баланса
         const updatedWallet = await Wallet.findOneAndUpdate(
             {
                 _id: wallet._id,
-                balance: { $gte: requestPrice } // Условие достаточности баланса
+                balance: { $gte: requestPrice } // условие достаточности баланса
             },
             {
                 $inc: { balance: -requestPrice },
@@ -1477,7 +1477,7 @@ bot.on(message('text'), async (ctx) => {
             { session }
         );
 
-        // Фиксация транзакции
+        // фиксация транзакции
         await session.commitTransaction();
         session.endSession();
 

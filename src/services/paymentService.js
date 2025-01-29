@@ -31,6 +31,7 @@ const createPayment = async (companyId, amount, description, orderId, chatId) =>
         TerminalKey: TINKOFF_TERMINAL_KEY,
         NotificationURL: `${process.env.BASE_URL}/webhook/tinkoff`,
         Password: TINKOFF_PASSWORD,
+        PayType: "O", // одностадийный платеж
     };
     console.log(JSON.stringify(postData));
 
