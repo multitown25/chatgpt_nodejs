@@ -41,13 +41,11 @@ const start = async () => {
         process.exit(1);
     }
 
-    // Настройка Webhook для Telegram
-    const WEBHOOK_URL = `${process.env.BASE_URL}/bot/webhook/${bot.token}`; // Убедитесь, что BASE_URL настроен правильно
-    await bot.telegram.setWebhook(WEBHOOK_URL);
-    console.log(`Webhook установлен на ${WEBHOOK_URL}`);
+    // const WEBHOOK_URL = `${process.env.BASE_URL}/bot/webhook/${bot.token}`; // Убедитесь, что BASE_URL настроен правильно
+    // await bot.telegram.setWebhook(WEBHOOK_URL);
+    // console.log(`Webhook установлен на ${WEBHOOK_URL}`);
 
-    // Используем Webhook-колбэк
-    app.use(bot.webhookCallback(`/bot/webhook/${bot.token}`));
+    // app.use(bot.webhookCallback(`/bot/webhook/${bot.token}`));
 
     app.use('/payment', paymentRoutes);
     app.use('/webhook', webhookRoutes);
@@ -56,6 +54,8 @@ const start = async () => {
         console.error('Unhandled error:', err);
         res.status(500).json({ error: 'Internal Server Error' });
     });
+
+    bot.launch();
 
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
