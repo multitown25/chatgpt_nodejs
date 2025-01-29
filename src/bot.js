@@ -1565,12 +1565,12 @@ const start = async () => {
     });
 
 
-    bot.launch();
+    // bot.launch();
 }
 
 start();
 
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+// process.once('SIGINT', () => bot.stop('SIGINT'));
+// process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 export default bot;

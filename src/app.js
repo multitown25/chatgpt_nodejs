@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import paymentRoutes from './routes/paymentRoutes.js';
 import webhookRoutes from './routes/webhookRoutes.js';
 import dotenv from 'dotenv';
+import bot from "./bot.js";
 
 dotenv.config();
 
@@ -28,8 +29,15 @@ const PORT = 8020;
 const MONGO_URI = process.env.MONGO_URI;
 
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
+    .then(async () => {
         console.log('MongoDB connected');
+
+        const WEBHOOK_URL = `${process.env.BASE_URL}/bot/webhook/${bot.token}`; // Убедитесь, что BASE_URL настроен правильно
+        await bot.telegram.setWebhook(WEBHOOK_URL);
+        console.log(`Webhook установлен на ${WEBHOOK_URL}`);
+
+        app.use(bot.webhookCallback(`/bot/webhook/${bot.token}`));
+
         app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
         });
@@ -37,3 +45,13 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .catch(err => {
         console.error('MongoDB connection error:', err);
     });
+
+
+process.once('SIGINT', () => {
+    bot.stop('SIGINT');
+    process.exit(0);
+});
+process.once('SIGTERM', () => {
+    bot.stop('SIGTERM');
+    process.exit(0);
+});
