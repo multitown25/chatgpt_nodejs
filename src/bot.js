@@ -1,5 +1,4 @@
 import {Markup, session, Telegraf} from 'telegraf';
-import config from 'config';
 import {message} from "telegraf/filters";
 import {code} from "telegraf/format";
 import {openai} from './services/openai.js';
@@ -51,7 +50,7 @@ const AVAILABLE_MODELS = [
 const REGISTER_FORMAT = '\nроль\nusername телеграмм аккаунта';
 const USERS_PER_PAGE = 5;
 
-const bot = new Telegraf(config.get('TG_BOT_TOKEN'));
+const bot = new Telegraf(process.env.TG_BOT_TOKEN);
 
 // Путь к файлу логов
 const __filename = fileURLToPath(import.meta.url);
@@ -233,13 +232,13 @@ bot.command('show_users', async (ctx) => {
 bot.command('start', async (ctx) => {
     const tgId = ctx.from.id;
     const tgUsername = ctx.from.username;
-    let welcomeMessage = (config.get('WELCOME_MESSAGE'));
+    let welcomeMessage = (process.env.WELCOME_MESSAGE);
 
     // check user register
     const user = await UserService.getUser({telegramUsername: tgUsername});
 
     if (!user) {
-        await ctx.reply(`\n ${config.get('NOT_REGISTERED')}`);
+        await ctx.reply(`\n ${process.env.NOT_REGISTERED}`);
         return;
     }
 
@@ -1053,7 +1052,7 @@ async function updateUser(ctx) {
             });
         }, 2500);
 
-        const welcomeMessage = config.get('WELCOME_MESSAGE').replace(/(Добро пожаловать в наш бот)/, `$1, ${userInfo[0]} ${userInfo[1]}`);
+        const welcomeMessage = process.env.WELCOME_MESSAGE.replace(/(Добро пожаловать в наш бот)/, `$1, ${userInfo[0]} ${userInfo[1]}`);
         await ctx.reply(welcomeMessage);
         ctx.session.systemMessages = [];
 
@@ -1077,7 +1076,7 @@ async function downloadImageFromTgServers(ctx) {
 
         const file = await ctx.telegram.getFile(fileId);
         console.log(file);
-        const fileUrl = `https://api.telegram.org/file/bot${config.get('TG_BOT_TOKEN')}/${file.file_path}`;
+        const fileUrl = `https://api.telegram.org/file/bot${process.env.TG_BOT_TOKEN}/${file.file_path}`;
 
         const fileName = `photo_${fileId}.png`; // Вы можете изменить расширение в зависимости от типа изображения
         const filePath = path.resolve(__dirname, '../images/downloads', fileName);
@@ -1555,7 +1554,7 @@ bot.action('cancel', async (ctx) => {
 });
 
 const start = async () => {
-    await mongoose.connect(config.get("MONGO_URI"), {
+    await mongoose.connect(process.env.MONGO_URI, {
         useNewUrlParser: true,
         useUnifiedTopology: true
     }).then(() => {

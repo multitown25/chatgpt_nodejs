@@ -315,4 +315,4 @@ class Stability {
     }
 }
 
-export const stability =  new Stability(config.get('STABILITY_API_KEY'));
+export const stability =  new Stability(process.env.STABILITY_API_KEY);
