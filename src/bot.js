@@ -1586,7 +1586,7 @@ const start = async () => {
     });
 
 
-    // bot.launch();
+    bot.launch();
 }
 
 start();
