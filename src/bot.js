@@ -1561,6 +1561,8 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
+
 // Маршруты
 app.use('/payment', paymentRoutes);
 app.use('/webhook', webhookRoutes);
@@ -1582,8 +1584,6 @@ const start = async () => {
     }).catch(err => {
         console.error('Error connecting to MongoDB', err);
     });
-
-    app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
 
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
