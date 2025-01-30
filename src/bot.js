@@ -1583,7 +1583,7 @@ const start = async () => {
         console.error('Error connecting to MongoDB', err);
     });
 
-    app.use(await bot.createWebhook({ domain: process.env.BASE_URL }));
+    app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
 
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
