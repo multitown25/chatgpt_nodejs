@@ -55,6 +55,14 @@ const USERS_PER_PAGE = 5;
 
 const bot = new Telegraf(process.env.TG_BOT_TOKEN);
 
+
+const app = express();
+
+// Middleware
+app.use(express.json());
+console.log("DOMAIN", process.env.BASE_URL_NO_PORT)
+app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
+
 // Путь к файлу логов
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -1555,13 +1563,6 @@ bot.action('cancel', async (ctx) => {
 
     ctx.session.systemMessages = [];
 });
-
-const app = express();
-
-// Middleware
-app.use(express.json());
-console.log("DOMAIN", process.env.BASE_URL_NO_PORT)
-app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
 
 app.use((req, res, next) => {
     console.log('Incoming request:', req.method, req.url);
