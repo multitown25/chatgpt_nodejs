@@ -1560,7 +1560,7 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-
+console.log("DOMAIN", process.env.BASE_URL_NO_PORT)
 app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
 
 app.use((req, res, next) => {
