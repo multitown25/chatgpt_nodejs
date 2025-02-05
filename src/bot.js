@@ -1565,7 +1565,7 @@ bot.action('cancel', async (ctx) => {
 });
 
 app.use((req, res, next) => {
-    console.log('Incoming request:', req.method, req.url, req.body);
+    console.log('Incoming request:', req.method, req.url, req.body, req.headers.referer);
     next();
 });
 
