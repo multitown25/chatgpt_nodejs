@@ -1563,6 +1563,18 @@ app.use(express.json());
 
 app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
 
+app.use((req, res, next) => {
+    console.log('Incoming request:', req.method, req.url);
+    next();
+});
+
+
+app.use('/webhook', (req, res, next) => {
+    console.log('Webhook request:', req.body);
+    next();
+});
+
+
 // Маршруты
 app.use('/payment', paymentRoutes);
 app.use('/webhook', webhookRoutes);
