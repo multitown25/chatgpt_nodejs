@@ -50,6 +50,7 @@ const AVAILABLE_MODELS = [
     },
 ]
 
+const WELCOME_MESSAGE = '\\n\uD83C\uDF1F Добро пожаловать в наш бот! \uD83C\uDF1F\\n\\nПривет, я — ваш виртуальный помощник от FLX, созданный для того, чтобы облегчить вашу работу и сделать день продуктивнее. Вот чем я могу вам помочь:\\n\\n\uD83D\uDD39 Предоставление актуальной информации и ответов на ваши вопросы.\\n\uD83D\uDD39 Помощь в организации рабочего времени и управлении задачами.\\n\uD83D\uDD39 Предоставление полезных советов и рекомендаций.\\n\uD83D\uDD39 Автоматизация рутинных процессов и задач.\\n\\nНе стесняйтесь обращаться ко мне за любой помощью или информацией. Я здесь, чтобы поддержать вас и помочь работать продуктивнее!\\n\n'
 const REGISTER_FORMAT = '\nроль\nusername телеграмм аккаунта';
 const USERS_PER_PAGE = 5;
 
@@ -243,7 +244,7 @@ bot.command('show_users', async (ctx) => {
 bot.command('start', async (ctx) => {
     const tgId = ctx.from.id;
     const tgUsername = ctx.from.username;
-    let welcomeMessage = (process.env.WELCOME_MESSAGE);
+    let welcomeMessage = (WELCOME_MESSAGE);
 
     // check user register
     const user = await UserService.getUser({telegramUsername: tgUsername});
@@ -295,6 +296,12 @@ bot.command('pay', async (ctx) => {
     await ctx.reply('Введите сумму для пополнения:', Markup.inlineKeyboard([
         [Markup.button.callback('Отменить', 'close')]
     ]));
+});
+
+bot.command('balance', async (ctx) => {
+   // try {
+   //
+   // }
 });
 
 // Константы
@@ -1063,7 +1070,7 @@ async function updateUser(ctx) {
             });
         }, 2500);
 
-        const welcomeMessage = process.env.WELCOME_MESSAGE.replace(/(Добро пожаловать в наш бот)/, `$1, ${userInfo[0]} ${userInfo[1]}`);
+        const welcomeMessage = WELCOME_MESSAGE.replace(/(Добро пожаловать в наш бот)/, `$1, ${userInfo[0]} ${userInfo[1]}`);
         await ctx.reply(welcomeMessage);
         ctx.session.systemMessages = [];
 
