@@ -335,7 +335,7 @@ bot.command('balance', async (ctx) => {
 const ALL_PERMISSIONS = [
     'register', 'delete', 'show_users', 'text_messages', 'voice_messages',
     'model_info', 'change_model', 'image', 'upscale', 'outpaint',
-    'replace', 'recolor', 'removebg', 'sketch', 'style', 'change_permission', 'new', 'pay'
+    'replace', 'recolor', 'removebg', 'sketch', 'style', 'change_permission', 'new', 'pay', 'balance'
 ];
 
 // Команда /change_permission
