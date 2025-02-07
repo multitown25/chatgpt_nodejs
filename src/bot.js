@@ -319,7 +319,7 @@ bot.command('balance', async (ctx) => {
        const message = `
 🎉 *Ваш баланс успешно получен!* 🎉
 
-💰 *Баланс:* ${formattedBalance} ${wallet.currency}
+💰 *Баланс:* ${wallet.balance} ${wallet.currency}
 📅 *Дата последнего обновления кошелька:* ${updatedAtFormatted}
 
 Спасибо, что пользуетесь нашим сервисом!
