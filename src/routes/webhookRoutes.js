@@ -11,10 +11,10 @@ const TINKOFF_PASSWORD = process.env.TINKOFF_PASSWORD; // Пароль для п
 // Функция для проверки подписи
 const verifySignature = (data, receivedSignature) => {
     // 1. Исключаем поле Signature из данных
-    const { Token, ...filteredData } = data;
+    const {Token, ...filteredData} = data;
 
     // 2. Добавляем поле Password
-    const dataWithPassword = { ...filteredData, Password: TINKOFF_PASSWORD };
+    const dataWithPassword = {...filteredData, Password: TINKOFF_PASSWORD};
 
     // 3. Получаем массив ключей и сортируем их по алфавитному порядку
     const sortedKeys = Object.keys(dataWithPassword).sort();
@@ -29,7 +29,7 @@ const verifySignature = (data, receivedSignature) => {
     return calculatedSignature === receivedSignature;
 };
 
-router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res) => {
+router.post('/tinkoff', express.urlencoded({extended: false}), async (req, res) => {
     const data = req.body;
     console.log("WEBHOOK TINKOFF", data);
 
@@ -40,10 +40,10 @@ router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res
         return res.status(400).send('Invalid signature');
     }
 
-    const { Status, PaymentId, OrderId, Amount } = data;
+    const {Status, PaymentId, OrderId, Amount} = data;
 
     try {
-        const transaction = await Transaction.findOne({ tinkoffPaymentId: PaymentId });
+        const transaction = await Transaction.findOne({tinkoffPaymentId: PaymentId});
         console.log('Transaction', transaction);
         if (!transaction) {
             return res.status(404).send('Transaction not found');
@@ -66,14 +66,24 @@ router.post('/tinkoff', express.urlencoded({ extended: false }), async (req, res
                     await wallet.save();
                 }
 
-                message = 'Ваш платеж успешно завершен! Спасибо за использование нашего сервиса.';
+                message = `
+✨ *Платеж успешно завершен!* ✨
+
+Ваш платеж успешно обработан, и средства уже зачислены на ваш счет.
+Благодарим вас за доверие и выбор нашего сервиса – ваша поддержка вдохновляет нас на дальнейшие успехи!
+
+Если у вас возникнут вопросы или потребуется помощь, наша команда всегда готова прийти на помощь.
+
+С наилучшими пожеланиями,  
+Команда сервиса
+    `;
                 sendMessage = true;
             }
         } else if (Status === 'REJECTED' || Status === 'CANCELLED') {
             transaction.status = 'failed';
             await transaction.save();
 
-            message = 'Ваш платеж не был завершен. Пожалуйста, попробуйте снова или свяжитесь с поддержкой.';
+            message = 'Произошла ошибка при обработке платежа. Пожалуйста, попробуйте снова или свяжитесь с поддержкой.';
             sendMessage = true;
         }
 
