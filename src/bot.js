@@ -126,10 +126,11 @@ bot.use(limiter);
 
 bot.telegram.setMyCommands([
     {command: '/start', description: 'Начать общение'},
+    {command: '/new', description: 'Сбросить контекст'},
     {command: '/register', description: 'Зарегистрировать нового пользователя'},
     {command: '/model_info', description: 'Настройка модели OpenAI'},
     {command: '/change_permission', description: 'Изменить разрешения пользователя'},
-    {command: '/new', description: 'Сбросить контекст'},
+    {command: '/balance', description: 'Посмотреть баланс компании'},
     {command: '/show_users', description: 'Показать всех пользователей'},
     {command: '/delete', description: 'Удалить пользователя'}
 ]);
@@ -299,9 +300,35 @@ bot.command('pay', async (ctx) => {
 });
 
 bot.command('balance', async (ctx) => {
-   // try {
-   //
-   // }
+   try {
+       const company = ctx.user.company;
+       const wallet = await Wallet.findOne({ company: company.id });
+
+       const balance = parseFloat(wallet.balance.toString());
+       const formattedBalance = balance.toLocaleString('ru-RU', {
+           minimumFractionDigits: 2,
+           maximumFractionDigits: 2
+       });
+
+       // Форматируем дату создания кошелька
+       const updatedAtFormatted = new Date(wallet.updatedAt).toLocaleDateString('ru-RU', {
+           day: 'numeric',
+           month: 'long',
+           year: 'numeric'
+       });
+       const message = `
+🎉 *Ваш баланс успешно получен!* 🎉
+
+💰 *Баланс:* ${formattedBalance} ${wallet.currency}
+📅 *Дата последнего обновления кошелька:* ${updatedAtFormatted}
+
+Спасибо, что пользуетесь нашим сервисом!
+    `;
+
+       return ctx.reply(message, { parse_mode: 'Markdown' });
+   } catch (e) {
+       throw e;
+   }
 });
 
 // Константы
