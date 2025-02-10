@@ -24,7 +24,7 @@ export default async function authMiddleware(ctx, next) {
         systemMessages: []
     };
 
-    if (!user.termsAccepted && ctx.update.data !== 'accept_terms') {
+    if (!user.termsAccepted && ctx.update.callback_query?.data !== 'accept_terms') {
         return ctx.reply('Для взаимодействия с ботом Вам необходимо дать свое согласие! Команда /start');
     }
 
