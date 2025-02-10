@@ -113,9 +113,12 @@ async function writeToFileAndSend(ctx, messageText) {
     }
 }
 
-bot.catch((err, ctx) => {
+bot.catch(async (err, ctx) => {
     console.error(`Ошибка для пользователя ${ctx.from.id}:`, err.stack);
     logError(err);
+    if (err.response?.data?.error?.code === 'insufficient_quota') {
+        await ctx.reply('На вашем счете недостаточно средств!')
+    }
 });
 
 bot.use(session());
