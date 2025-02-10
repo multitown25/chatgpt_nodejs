@@ -933,71 +933,48 @@ bot.command('style', async (ctx) => {
 function splitMessage(text, maxLength = 4096) {
     const messages = [];
     let current = '';
-    const tagStack = []; // Стек для отслеживания открытых Markdown-элементов
+    const tagStack = [];
 
-    // Маппинг открывающих и закрывающих символов Markdown
     const markdownTags = {
-        '```': 'codeBlock',                 // Блок кода
-        '`': 'inlineCode',                  // Встраиваемый код
-        '**': 'bold',                       // Жирный текст
-        '*': 'italic',                      // Курсив
-        '~~': 'strikethrough',              // Зачеркнутый текст
-        '[]()': 'link',                     // Ссылка
-        '![]()': 'image',                   // Изображение
+        '```': 'codeBlock',
+        '`': 'inlineCode',
+        '**': 'bold',
+        '*': 'italic',
+        '~~': 'strikethrough',
+        '[': 'link',  // Учтем открывающую скобку ссылки
+        '![': 'image'
     };
 
-    // Функция для получения закрывающих символов из стека
     function closeTags() {
         let closing = '';
         while (tagStack.length > 0) {
             const tag = tagStack.pop();
-            for (const key in markdownTags) {
-                if (markdownTags[key] === tag) {
-                    closing += key;
-                    break;
-                }
-            }
+            closing = (tag === 'codeBlock' ? '```\n' : tag) + closing;
         }
         return closing;
     }
 
-    // Функция для открытия тегов из стека
     function openTags() {
-        let opening = '';
-        tagStack.forEach(tag => {
-            for (const key in markdownTags) {
-                if (markdownTags[key] === tag) {
-                    opening += key;
-                    break;
-                }
-            }
-        });
-        return opening;
+        return tagStack.map(tag => (tag === 'codeBlock' ? '```\n' : tag)).join('');
     }
 
-    // Разделяем текст на строки для более безопасного разбиения
     const lines = text.split('\n');
 
-    for (let originalLine of lines) {
-        let line = originalLine;
+    for (let line of lines) {
         let i = 0;
 
         while (i < line.length) {
             let matched = false;
 
-            const tags = Object.keys(markdownTags);
-            // Проверяем наличие многосимвольных тегов (``` , **, ~~)
-            for (const tag of tags) {
+            for (const tag in markdownTags) {
                 if (line.startsWith(tag, i)) {
                     const currentTag = markdownTags[tag];
                     const lastTag = tagStack[tagStack.length - 1];
 
                     if (lastTag === currentTag) {
-                        // Закрываем тег
                         current += tag;
                         tagStack.pop();
                     } else {
-                        // Открываем тег
                         current += tag;
                         tagStack.push(currentTag);
                     }
@@ -1008,46 +985,40 @@ function splitMessage(text, maxLength = 4096) {
             }
 
             if (!matched) {
-                // Добавляем текущий символ
                 current += line[i];
                 i++;
             }
 
-            // Проверка на превышение лимита после добавления символа или тега
             if (current.length >= maxLength) {
-                // Закрываем все открытые теги перед разбиением
-                current += closeTags();
-                messages.push(current);
-                current = '';
-
-                // Открываем заново те же теги для следующего сообщения
-                current += openTags();
+                if (tagStack.includes('codeBlock')) {
+                    current += '\n```'; // Закрываем кодовый блок перед отправкой
+                    messages.push(current);
+                    current = '```\n'; // Открываем заново в новом сообщении
+                } else {
+                    current += closeTags();
+                    messages.push(current);
+                    current = openTags();
+                }
             }
         }
 
-        // Добавляем перенос строки
         current += '\n';
 
-        // Проверка после добавления строки
         if (current.length > maxLength) {
-            // Закрываем все открытые теги перед разбиением
             current += closeTags();
             messages.push(current);
-            current = '';
-            // Открываем заново те же теги для следующего сообщения
-            current += openTags();
+            current = openTags();
         }
     }
 
-    // Добавляем оставшийся текст
     if (current.length > 0) {
-        // Закрываем оставшиеся теги
         current += closeTags();
         messages.push(current);
     }
 
     return messages;
 }
+
 
 async function payment(ctx) {
     try {
