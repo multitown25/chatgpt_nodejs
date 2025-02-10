@@ -107,13 +107,14 @@ async function writeToFileAndSend(ctx, messageText) {
 
         await ctx.replyWithDocument({source: filepath}, {caption: 'Ваше длинное сообщение сохранено и отправлено в файл.'});
     } catch (error) {
-        console.error('Ошибка при записи файла или отправке сообщения:', error);
+        console.error('Ошибка при записи файла или отправке сообщения:', error?.data);
         await ctx.reply('Произошла ошибка при обработке вашего сообщения. Пожалуйста, попробуйте позже.');
         throw error;
     }
 }
 
 bot.catch(async (err, ctx) => {
+    console.log('ERROR', err.response?.data?.error?.code);
     if (err.response?.data?.error?.code === 'insufficient_quota') {
         await ctx.reply('На вашем счете недостаточно средств!')
     }
