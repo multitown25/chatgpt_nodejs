@@ -114,7 +114,7 @@ async function writeToFileAndSend(ctx, messageText) {
 }
 
 bot.catch(async (err, ctx) => {
-    console.error('ERROR', err);
+    console.error('ERROR FROM CATCH', err);
     if (err.response?.data?.error?.code === 'insufficient_quota') {
         await ctx.reply('На вашем счете недостаточно средств!')
     }
