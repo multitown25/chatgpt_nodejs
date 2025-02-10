@@ -24,6 +24,10 @@ export default async function authMiddleware(ctx, next) {
         systemMessages: []
     };
 
+    if (!user.termsAccepted) {
+        return ctx.reply('Для взаимодействия с ботом Вам необходимо дать свое согласие! Команда /start');
+    }
+
     console.log('ctx.session?.systemMessages', ctx.session?.systemMessages);
     if(!user.firstname || !user.lastname) {
         if (ctx.session?.systemMessages?.pop()?.type === 'updateUser') {
