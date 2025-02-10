@@ -941,7 +941,7 @@ function splitMessage(text, maxLength = 4096) {
         '**': 'bold',
         '*': 'italic',
         '~~': 'strikethrough',
-        '[': 'link',  // Учтем открывающую скобку ссылки
+        '[': 'link',
         '![': 'image'
     };
 
@@ -991,9 +991,9 @@ function splitMessage(text, maxLength = 4096) {
 
             if (current.length >= maxLength) {
                 if (tagStack.includes('codeBlock')) {
-                    current += '\n```'; // Закрываем кодовый блок перед отправкой
+                    current += '\n```';
                     messages.push(current);
-                    current = '```\n'; // Открываем заново в новом сообщении
+                    current = '```\n';
                 } else {
                     current += closeTags();
                     messages.push(current);
