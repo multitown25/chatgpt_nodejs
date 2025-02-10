@@ -114,7 +114,7 @@ async function writeToFileAndSend(ctx, messageText) {
 }
 
 bot.catch(async (err, ctx) => {
-    console.log('ERROR', err.response?.data?.error?.code);
+    console.log('ERROR', err.response?.data);
     if (err.response?.data?.error?.code === 'insufficient_quota') {
         await ctx.reply('На вашем счете недостаточно средств!')
     }
@@ -1531,7 +1531,7 @@ bot.on(message('text'), async (ctx) => {
         session.endSession();
 
     } catch (e) {
-        console.log('Error from text message', e);
+        // console.log('Error from text message', e);
         await session.abortTransaction();
         session.endSession();
         await writeToFileAndSend(ctx, response?.content);
