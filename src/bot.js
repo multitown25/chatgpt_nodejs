@@ -539,10 +539,10 @@ bot.action(/select_user_(.+)/, async (ctx) => {
         };
 
         await ctx.reply(
-            `🔹 **Разрешения пользователя:**
-${effectivePermissions.length > 0 ? effectivePermissions.join(', ') : 'Нет разрешений'}`,
+            `🔹 **Разрешения пользователя:**  
+${effectivePermissions.length > 0 ? effectivePermissions.map(perm => `\`${perm}\``).join(', ') : 'Нет разрешений'}`,
             {
-                parse_mode: 'Markdown',
+                parse_mode: 'MarkdownV2',
                 ...Markup.inlineKeyboard([
                     [Markup.button.callback('➕ Добавить Разрешение', `show_add_${userId}`)],
                     ...permissionButtons,
