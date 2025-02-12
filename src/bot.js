@@ -383,7 +383,7 @@ bot.command('balance', async (ctx) => {
 // Константы
 const ALL_PERMISSIONS = [
     'register', 'delete', 'show_users', 'text_messages', 'voice_messages',
-    'model_info', 'change_model', 'image', 'upscale', 'outpaint',
+    'model_info', 'image', 'upscale', 'outpaint',
     'replace', 'recolor', 'removebg', 'sketch', 'style', 'change_permission', 'new', 'pay', 'balance'
 ];
 
