@@ -561,6 +561,7 @@ ${effectivePermissions.length > 0 ? effectivePermissions.map(perm => `\`${perm}\
 // Обработчик добавления разрешения
 bot.action(/add_perm_(.+)_(.+)/, async (ctx) => {
     try {
+        console.log('CTX.MATCH', ctx.match);
         const userId = ctx.match[1];
         const permission = ctx.match[2];
 
