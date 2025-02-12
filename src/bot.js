@@ -587,9 +587,9 @@ bot.action(/add_perm_([^_]+)_(.+)/, async (ctx) => {
 
         await ctx.editMessageText(
             `🔹 **Разрешения пользователя:**
-${effectivePermissions.length > 0 ? effectivePermissions.join(', ') : 'Нет разрешений'}`,
+${effectivePermissions.length > 0 ? effectivePermissions.map(perm => `\`${perm}\``).join(', ') : 'Нет разрешений'}`,
             {
-                parse_mode: 'Markdown',
+                parse_mode: 'MarkdownV2',
                 ...Markup.inlineKeyboard([
                     [Markup.button.callback('➕ Добавить Разрешение', `show_add_${userId}`)],
                     ...effectivePermissions.map(perm => [
