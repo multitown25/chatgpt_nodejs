@@ -559,9 +559,8 @@ ${effectivePermissions.length > 0 ? effectivePermissions.map(perm => `\`${perm}\
 });
 
 // Обработчик добавления разрешения
-bot.action(/add_perm_(.+)_(.+)/, async (ctx) => {
+bot.action(/add_perm_([^_]+)_(.+)/, async (ctx) => {
     try {
-        console.log('CTX.MATCH', ctx.match);
         const userId = ctx.match[1];
         const permission = ctx.match[2];
 
@@ -609,7 +608,7 @@ ${effectivePermissions.length > 0 ? effectivePermissions.join(', ') : 'Нет р
 });
 
 // Обработчик удаления разрешения
-bot.action(/remove_perm_(.+)_(.+)/, async (ctx) => {
+bot.action(/remove_perm_([^_]+)_(.+)/, async (ctx) => {
     try {
         const userId = ctx.match[1];
         const permission = ctx.match[2];
