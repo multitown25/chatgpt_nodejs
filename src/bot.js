@@ -20,6 +20,7 @@ import {stability} from "./services/stability.js";
 import {imageHelper} from "./imageHelper.js";
 import axios from "axios";
 import dotenv from "dotenv";
+
 dotenv.config();
 import {createPayment} from "./services/paymentService.js";
 import express from "express";
@@ -29,13 +30,18 @@ import webhookRoutes from "./routes/webhookRoutes.js";
 
 const AVAILABLE_MODELS = [
     {
+        name: "OpenAI o3-mini",
+        description: "лучшая модель для программирования",
+        picture: "⌨️"
+    },
+    {
         name: "OpenAI o1-preview",
-        description: "новая модель для решения самых сложных задач путем рассуждений. Каждый запрос расходует 5 генераций",
+        description: "модель для решения самых сложных задач путем рассуждений. Каждый запрос расходует 5 генераций",
         picture: "🍓"
     },
     {
         name: "OpenAI o1-mini",
-        description: "новая модель для кода, математических и научных задач",
+        description: "модель для кода, математических и научных задач",
         picture: "🤖"
     },
     {
@@ -62,7 +68,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 console.log("DOMAIN", process.env.BASE_URL_NO_PORT)
-app.use(await bot.createWebhook({ domain: process.env.BASE_URL_NO_PORT }));
+app.use(await bot.createWebhook({domain: process.env.BASE_URL_NO_PORT}));
 
 // Путь к файлу логов
 const __filename = fileURLToPath(import.meta.url);
@@ -287,7 +293,7 @@ bot.command('start', async (ctx) => {
     if (!user.termsAccepted) {
         return ctx.reply(TERMS_TEXT, Markup.inlineKeyboard([
             [Markup.button.callback('Согласен', 'accept_terms')]
-        ]), { parse_mode: 'Markdown' });
+        ]), {parse_mode: 'Markdown'});
     }
 
     if (!user.firstname || !user.lastname) {
@@ -305,7 +311,7 @@ bot.action('accept_terms', async (ctx) => {
         }
 
         ctx.answerCbQuery(); // скрываем уведомление от кнопки
-        return ctx.reply('Спасибо за ваше согласие! Теперь вы можете пользоваться ботом.', { parse_mode: 'Markdown' });
+        return ctx.reply('Спасибо за ваше согласие! Теперь вы можете пользоваться ботом.', {parse_mode: 'Markdown'});
     } catch (err) {
         console.error(err);
         return ctx.reply('Ошибка при сохранении вашего согласия.');
@@ -343,23 +349,23 @@ bot.command('pay', async (ctx) => {
 });
 
 bot.command('balance', async (ctx) => {
-   try {
-       const company = ctx.user.company;
-       const wallet = await Wallet.findOne({ company: company.id });
+    try {
+        const company = ctx.user.company;
+        const wallet = await Wallet.findOne({company: company.id});
 
-       const balance = parseFloat(wallet.balance.toString());
-       const formattedBalance = balance.toLocaleString('ru-RU', {
-           minimumFractionDigits: 2,
-           maximumFractionDigits: 2
-       });
+        const balance = parseFloat(wallet.balance.toString());
+        const formattedBalance = balance.toLocaleString('ru-RU', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
 
-       // Форматируем дату создания кошелька
-       const updatedAtFormatted = new Date(wallet.updatedAt).toLocaleDateString('ru-RU', {
-           day: 'numeric',
-           month: 'long',
-           year: 'numeric'
-       });
-       const message = `
+        // Форматируем дату создания кошелька
+        const updatedAtFormatted = new Date(wallet.updatedAt).toLocaleDateString('ru-RU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        });
+        const message = `
 🎉 *Ваш баланс успешно получен!* 🎉
 
 💰 *Баланс:* ${formattedBalance} ${wallet.currency}
@@ -368,10 +374,10 @@ bot.command('balance', async (ctx) => {
 Спасибо, что пользуетесь нашим сервисом!
     `;
 
-       return ctx.reply(message, { parse_mode: 'Markdown' });
-   } catch (e) {
-       throw e;
-   }
+        return ctx.reply(message, {parse_mode: 'Markdown'});
+    } catch (e) {
+        throw e;
+    }
 });
 
 // Константы
@@ -1460,7 +1466,7 @@ bot.on(message('text'), async (ctx) => {
         await ctx.reply(code('Сообщение принял. Жду ответ от сервера...'));
 
         const user = ctx.user;
-        const wallet = await Wallet.findOne({ company: user.company.id }).session(session);
+        const wallet = await Wallet.findOne({company: user.company.id}).session(session);
         if (!wallet) {
             await ctx.reply('Кошелек компании не найден.');
             await session.abortTransaction();
@@ -1489,7 +1495,7 @@ bot.on(message('text'), async (ctx) => {
 
         response = await openai.chat(ctx.session.messages, model.name);
 
-        const { promptTokens, completionTokens, totalTokens } = response.tokens;
+        const {promptTokens, completionTokens, totalTokens} = response.tokens;
         const price = (promptTokens * model.inputPrice) + (completionTokens * model.outputPrice);
 
         const requestPrice = parseFloat(price.toString());
@@ -1498,13 +1504,13 @@ bot.on(message('text'), async (ctx) => {
         const updatedWallet = await Wallet.findOneAndUpdate(
             {
                 _id: wallet._id,
-                balance: { $gte: requestPrice } // условие достаточности баланса
+                balance: {$gte: requestPrice} // условие достаточности баланса
             },
             {
-                $inc: { balance: -requestPrice },
-                $set: { updatedAt: Date.now() }
+                $inc: {balance: -requestPrice},
+                $set: {updatedAt: Date.now()}
             },
-            { new: true, session }
+            {new: true, session}
         );
 
         if (!updatedWallet) {
@@ -1532,7 +1538,7 @@ bot.on(message('text'), async (ctx) => {
             completionTokens,
             totalTokens,
             mongoose.Types.Decimal128.fromString(requestPrice.toFixed(10)),
-            { session }
+            {session}
         );
 
         // фиксация транзакции
@@ -1631,7 +1637,7 @@ app.use('/webhook', webhookRoutes);
 // Обработка ошибок
 app.use((err, req, res, next) => {
     console.error('Unhandled error:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({error: 'Internal Server Error'});
 });
 
 const PORT = 8020;
