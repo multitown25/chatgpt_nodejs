@@ -29,9 +29,9 @@ export default async function authMiddleware(ctx, next) {
     }
 
     console.log('ctx.session?.systemMessages', ctx.session?.systemMessages);
-    if(!user.firstname || !user.lastname) {
-        if (ctx.session?.systemMessages?.pop()?.type === 'updateUser') {
-            ctx.session.systemMessages.push({type: 'updateUser', data: ctx.message?.text});
+    if (!user.firstname || !user.lastname) {
+        const updateUserMsg = ctx.session.systemMessages.find(msg => msg.type === 'updateUser');
+        if (updateUserMsg) {
             return next();
         }
         return ctx.reply('Для взаимодействия с ботом Вам необходимо ввести имя и фамилию! Команда /start');

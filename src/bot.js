@@ -298,7 +298,7 @@ bot.command('start', async (ctx) => {
 
     if (!user.firstname || !user.lastname) {
         await ctx.reply('Для продолжения необходимо ввести имя и фамилию в следующем сообщении через пробел!');
-        ctx.session.systemMessages.push({type: 'updateUser', data: ctx.message.text})
+        ctx.session.systemMessages.push({ type: 'updateUser' });
     }
 });
 
