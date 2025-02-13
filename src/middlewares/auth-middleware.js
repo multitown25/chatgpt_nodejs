@@ -29,7 +29,7 @@ export default async function authMiddleware(ctx, next) {
     }
 
     console.log('ctx.session?.systemMessages', ctx.session?.systemMessages);
-    if ((!user.firstname || !user.lastname) && ctx.update.callback_query?.data === 'accept_terms') {
+    if ((!user.firstname || !user.lastname) && ctx.update.callback_query?.data !== 'accept_terms') {
         const updateUserMsg = ctx.session.systemMessages.find(msg => msg.type === 'updateUser');
         if (updateUserMsg) {
             return next();
