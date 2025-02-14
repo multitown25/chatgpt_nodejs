@@ -2,7 +2,7 @@ import User from '../models/user-model.js'
 
 export default async function authMiddleware(ctx, next) {
     const command = ctx.update?.message?.text;
-    console.log('command', command);
+    // console.log('command', command);
     if (command === '/start') {
         return next();
     }
@@ -28,17 +28,17 @@ export default async function authMiddleware(ctx, next) {
         return ctx.reply('Для взаимодействия с ботом Вам необходимо дать свое согласие! Команда /start');
     }
 
-    console.log('ctx.session?.systemMessages', ctx.session?.systemMessages);
-    if ((!user.firstname || !user.lastname) && ctx.update.callback_query?.data !== 'accept_terms') {
+    // console.log('ctx.session?.systemMessages', ctx.session?.systemMessages);
+    if ((!user.firstname || !user.lastname) && user.termsAccepted) {
         const updateUserMsg = ctx.session.systemMessages.find(msg => msg.type === 'updateUser');
         if (updateUserMsg) {
             return next();
         }
-        return ctx.reply('Для взаимодействия с ботом Вам необходимо ввести имя и фамилию! Команда /start');
+        return ctx.reply('Пожалуйста, перейдите на главную /start и введите имя и фамилию');
     }
 
     const userPerms = await user.getEffectivePermissions();
-    console.log(userPerms);
+    // console.log(userPerms);
     if (command?.startsWith('/')) {
         if (!userPerms.includes(command.split('/')[1])) {
             return ctx.reply(`У вас нет прав для выполнения этой операции. Доступ запрещен!`);

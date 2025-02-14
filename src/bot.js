@@ -298,7 +298,9 @@ bot.command('start', async (ctx) => {
 
     if (!user.firstname || !user.lastname) {
         await ctx.reply('Для продолжения необходимо ввести имя и фамилию в следующем сообщении через пробел!');
-        ctx.session.systemMessages.push({ type: 'updateUser' });
+        if (!ctx.session.systemMessages.find(item => item.type === 'updateUser')) {
+            ctx.session.systemMessages.push({ type: 'updateUser' });
+        }
     }
 });
 
@@ -311,7 +313,10 @@ bot.action('accept_terms', async (ctx) => {
         }
 
         ctx.answerCbQuery(); // скрываем уведомление от кнопки
-        return ctx.reply('Спасибо за ваше согласие! Теперь вы можете пользоваться ботом.', {parse_mode: 'Markdown'});
+        await ctx.reply('Спасибо за ваше согласие!', {parse_mode: 'Markdown'});
+
+        ctx.session.systemMessages.push({ type: 'updateUser' });
+        return ctx.reply('Теперь, пожалуйста, введите имя и фамилию', {parse_mode: 'Markdown'})
     } catch (err) {
         console.error(err);
         return ctx.reply('Ошибка при сохранении вашего согласия.');
