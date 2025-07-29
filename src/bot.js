@@ -132,7 +132,7 @@ bot.catch(async (err, ctx) => {
 bot.use(session());
 bot.use(authMiddleware);
 bot.use(updateLastActivityMiddleware);
-const limiter = rateLimiter(5, 5);
+const limiter = rateLimiter(5, 5); // 5 req per 5 sec
 bot.use(limiter);
 
 bot.telegram.setMyCommands([
