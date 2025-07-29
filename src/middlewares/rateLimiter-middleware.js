@@ -2,6 +2,9 @@ import redisClient from "../services/redis-service.js";
 
 export const rateLimiter = (limit, windowSec) => {
     return async (ctx, next) => {
+        if (ctx.session.systemMessages.length > 0) {
+            return next();
+        }
         const userId = ctx.from.id;
         const key = `rateLimiter:${userId}`;
         try {
